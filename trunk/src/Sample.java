@@ -1,5 +1,21 @@
+import java.io.IOException;
+
+import javax.swing.JEditorPane;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+
 import com.ECS.client.jax.Item;
 import com.ECS.client.jax.Items;
+
+import edu.gatech.cs7450.prodviz.amazon.AmazonAPI;
+import edu.gatech.cs7450.prodviz.amazon.AmazonReview;
 
 
 public class Sample {
@@ -47,6 +63,14 @@ public class Sample {
 					System.out.printf(item.getEditorialReviews().getEditorialReview().get(i).getSource() + "\n" + item.getEditorialReviews().getEditorialReview().get(i).getContent() + "\n");
 				
 				System.out.println("Link to customer reviews iFrame " + item.getCustomerReviews().getIFrameURL());
+				
+				AmazonReview[] reviews = AmazonAPI.getInstance().extractReviews(item.getCustomerReviews().getIFrameURL());
+				
+				for (int i = 0; i < reviews.length; i++) {
+					System.out.println("----------------------------------------");
+					System.out.println("Name: " + reviews[i].getName());
+					System.out.println("Contents: " + reviews[i].getContents());
+				}
 				
 				System.out.println("Link to medium sized image " + item.getImageSets().get(0).getImageSet().get(0).getMediumImage().getURL());
 				
