@@ -24,8 +24,8 @@ public class Sample {
 		itemRequest.setSearchIndex("Books");
 		itemRequest.setIdType("ISBN");
 		itemRequest.getItemId().add("9780385535137");
-		itemRequest.getResponseGroup().add("EditorialReviews");
-		
+		//itemRequest.getResponseGroup().add("Medium");
+		itemRequest.getResponseGroup().add("Large");
 		
 		com.ECS.client.jax.ItemLookup ItemElement= new com.ECS.client.jax.ItemLookup();
 		ItemElement.setAWSAccessKeyId("AKIAIL3MUE4F2EWIMGRQ");
@@ -40,8 +40,17 @@ public class Sample {
 		for (Items itemList : response.getItems()) {
 			for (Item item : itemList.getItem()){
 				System.out.println("Book Name: " +
-				item.getItemAttributes().getTitle()+ " " +
-				item.getEditorialReviews().toString());
+				item.getItemAttributes().getTitle()+ " \n");
+				
+				
+				for (int i = 0; i< item.getEditorialReviews().getEditorialReview().size(); i++)
+					System.out.printf(item.getEditorialReviews().getEditorialReview().get(i).getSource() + "\n" + item.getEditorialReviews().getEditorialReview().get(i).getContent() + "\n");
+				
+				System.out.println("Link to customer reviews iFrame " + item.getCustomerReviews().getIFrameURL());
+				
+				System.out.println("Link to medium sized image " + item.getImageSets().get(0).getImageSet().get(0).getMediumImage().getURL());
+				
+				break; //Only Display the first response
 			}
 		}
 	}
