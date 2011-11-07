@@ -6,6 +6,8 @@ import edu.gatech.cs7450.prodviz.gui.MainFrame;
 
 public class ProdViz {
 
+	private static String APP_NAME = "Visual Product Recommendation System";
+	
 	/**
 	 * Main program entry point.
 	 * 
@@ -22,7 +24,7 @@ public class ProdViz {
 				"admin");
 		
 		// Create GUI
-		MainFrame mainFrame = new MainFrame();
+		MainFrame mainFrame = new MainFrame(APP_NAME);
 
 		// Create application context
 		ApplicationContext.initialize(database, mainFrame);
