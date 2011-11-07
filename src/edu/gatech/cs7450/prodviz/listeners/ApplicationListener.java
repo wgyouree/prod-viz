@@ -4,7 +4,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import edu.gatech.cs7450.prodviz.ApplicationContext;
-import edu.gatech.cs7450.prodviz.events.BaseEvent;
 
 public class ApplicationListener implements ActionListener {
 	

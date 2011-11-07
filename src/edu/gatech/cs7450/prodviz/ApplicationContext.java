@@ -8,28 +8,28 @@ import edu.gatech.cs7450.prodviz.listeners.ApplicationListener;
 
 public class ApplicationContext {
 
-	private Database database;
+	private ProductImp[] products;
 	private AppFrame mainFrame;
 	private ApplicationListener listener;
 	
-	private ApplicationContext(Database database, AppFrame mainFrame) {
-		this.database = database;
+	private ApplicationContext(ProductImp[] products, AppFrame mainFrame) {
+		this.products = products;
 		this.mainFrame = mainFrame;
 		this.listener = new ApplicationListener(this);
 	}
 	
 	private static ApplicationContext INSTANCE;
 	
-	public static void initialize(Database database, AppFrame mainFrame) {
-		INSTANCE = new ApplicationContext(database, mainFrame);
+	public static void initialize(ProductImp[] products, AppFrame mainFrame) {
+		INSTANCE = new ApplicationContext(products, mainFrame);
 	}
 	
 	public static ApplicationContext getInstance() {
 		return INSTANCE;
 	}
 	
-	public Database getDatabase() {
-		return this.database;
+	public ProductImp[] getProducts() {
+		return this.products;
 	}
 	
 	public AppFrame getMainFrame() {
