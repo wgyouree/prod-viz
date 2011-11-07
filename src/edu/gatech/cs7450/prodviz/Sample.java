@@ -17,6 +17,7 @@ import com.ECS.client.jax.Items;
 
 import edu.gatech.cs7450.prodviz.amazon.AmazonAPI;
 import edu.gatech.cs7450.prodviz.amazon.AmazonReview;
+import edu.gatech.cs7450.prodviz.amazon.AwsHandlerResolver;
 
 
 public class Sample {
