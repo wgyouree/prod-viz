@@ -2,7 +2,6 @@ package edu.gatech.cs7450.prodviz;
 
 import java.awt.event.ActionListener;
 
-import edu.gatech.cs7450.prodviz.data.Database;
 import edu.gatech.cs7450.prodviz.gui.AppFrame;
 import edu.gatech.cs7450.prodviz.listeners.ApplicationListener;
 
