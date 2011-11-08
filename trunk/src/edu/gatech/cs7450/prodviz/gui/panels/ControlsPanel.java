@@ -9,9 +9,9 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 
 import edu.gatech.cs7450.prodviz.ApplicationContext;
-import edu.gatech.cs7450.prodviz.gui.AppPanelImp;
+import edu.gatech.cs7450.prodviz.gui.AbstractAppPanel;
 
-public class ControlsPanel extends AppPanelImp {
+public class ControlsPanel extends AbstractAppPanel {
 
 	private static final long serialVersionUID = 1L;
 	

@@ -2,10 +2,10 @@ package edu.gatech.cs7450.prodviz.data;
 
 public class Database {
 
-	private DatabaseConfig config;
+	private IDatabaseConfig config;
 	private boolean initialized = false;
 	
-	public Database(DatabaseConfig config) {
+	public Database(IDatabaseConfig config) {
 		this.config = config;
 	}
 	

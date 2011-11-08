@@ -1,8 +1,8 @@
 package edu.gatech.cs7450.prodviz.imp.book;
 
-import edu.gatech.cs7450.prodviz.data.DatabaseConfig;
+import edu.gatech.cs7450.prodviz.data.IDatabaseConfig;
 
-public class BookDatabaseConfig implements DatabaseConfig {
+public class BookDatabaseConfig implements IDatabaseConfig {
 
 	private String driver;
 	private String url;
