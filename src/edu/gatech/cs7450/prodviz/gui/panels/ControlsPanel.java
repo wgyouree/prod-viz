@@ -17,16 +17,21 @@ public class ControlsPanel extends AbstractAppPanel {
 	
 	public ControlsPanel() {
 		this.setBackground(Color.YELLOW);
+		this.setLayout(new GridBagLayout());
 	}
 	
 	public void initComponents() {
-		GridBagLayout layout = new GridBagLayout();
 		ComboBoxModel productModel = new DefaultComboBoxModel(ApplicationContext.getInstance().getProducts());
 		JComboBox productBox = new JComboBox(productModel);
 		GridBagConstraints productBoxConstraints = new GridBagConstraints();
-		productBoxConstraints.gridx = 1;
-		productBoxConstraints.gridy = 1;
+		productBoxConstraints.gridx = 0;
+		productBoxConstraints.gridy = 0;
+		productBoxConstraints.gridwidth = 1;
+		productBoxConstraints.gridheight = 1;
 		productBoxConstraints.fill = GridBagConstraints.HORIZONTAL;
+		productBoxConstraints.anchor = GridBagConstraints.PAGE_START;
+		productBoxConstraints.weightx = 0.5;
+		productBoxConstraints.weighty = 0.5;
 		this.add(productBox, productBoxConstraints);
 	}
 }
