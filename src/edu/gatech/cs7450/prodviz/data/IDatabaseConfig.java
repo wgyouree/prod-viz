@@ -1,6 +1,6 @@
 package edu.gatech.cs7450.prodviz.data;
 
-public interface DatabaseConfig {
+public interface IDatabaseConfig {
 
 	public String getDriver();
 	public String getUrl();

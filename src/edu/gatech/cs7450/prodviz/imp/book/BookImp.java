@@ -2,7 +2,7 @@ package edu.gatech.cs7450.prodviz.imp.book;
 
 import edu.gatech.cs7450.prodviz.AbstractProduct;
 import edu.gatech.cs7450.prodviz.data.Database;
-import edu.gatech.cs7450.prodviz.data.DatabaseConfig;
+import edu.gatech.cs7450.prodviz.data.IDatabaseConfig;
 
 public class BookImp extends AbstractProduct {
 
@@ -11,7 +11,7 @@ public class BookImp extends AbstractProduct {
 	
 	public BookImp() {
 		// Create database interface
-		DatabaseConfig config = new BookDatabaseConfig(
+		IDatabaseConfig config = new BookDatabaseConfig(
 				"com.mysql.jdbc.Driver",
 				"jdbc:mysql://localhost:3306/",
 				"book",

@@ -17,13 +17,13 @@ public class MainFrame extends AppFrame {
 	public enum AppPanel {
 		GRAPH(new GraphPanel()), BAR(new BarPanel()), CONTROLS(new ControlsPanel());
 		
-		private AppPanelImp panel;
+		private AbstractAppPanel panel;
 		
-		private AppPanel(AppPanelImp panel) {
+		private AppPanel(AbstractAppPanel panel) {
 			this.panel = panel;
 		}
 		
-		public AppPanelImp getPanel() {
+		public AbstractAppPanel getPanel() {
 			return this.panel;
 		}
 	}
