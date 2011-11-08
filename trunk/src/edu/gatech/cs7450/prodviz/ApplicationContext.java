@@ -8,11 +8,11 @@ import edu.gatech.cs7450.prodviz.listeners.ApplicationListener;
 
 public class ApplicationContext {
 
-	private ProductImp[] products;
+	private AbstractProduct[] products;
 	private AppFrame mainFrame;
 	private ApplicationListener listener;
 	
-	private ApplicationContext(ProductImp[] products, AppFrame mainFrame) {
+	private ApplicationContext(AbstractProduct[] products, AppFrame mainFrame) {
 		this.products = products;
 		this.mainFrame = mainFrame;
 		this.listener = new ApplicationListener(this);
@@ -20,7 +20,7 @@ public class ApplicationContext {
 	
 	private static ApplicationContext INSTANCE;
 	
-	public static void initialize(ProductImp[] products, AppFrame mainFrame) {
+	public static void initialize(AbstractProduct[] products, AppFrame mainFrame) {
 		INSTANCE = new ApplicationContext(products, mainFrame);
 	}
 	
@@ -28,7 +28,7 @@ public class ApplicationContext {
 		return INSTANCE;
 	}
 	
-	public ProductImp[] getProducts() {
+	public AbstractProduct[] getProducts() {
 		return this.products;
 	}
 	

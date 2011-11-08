@@ -12,8 +12,13 @@ public class BottomPanel extends JPanel {
 	private static int DEFAULT_HEIGHT = 200;
 	
 	public BottomPanel() {
-		this.setMaximumSize(new Dimension(MainFrame.MAXIMUM_SIZE, MainFrame.MAXIMUM_SIZE));
-		this.setMinimumSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
-		this.setPreferredSize(new Dimension(MainFrame.MAXIMUM_SIZE, DEFAULT_HEIGHT));
+		this.configureAsBottomPanel(this);
+	}
+	
+	public JPanel configureAsBottomPanel(JPanel panel) {
+		panel.setMaximumSize(new Dimension(MainFrame.MAXIMUM_SIZE, MainFrame.MAXIMUM_SIZE));
+		panel.setMinimumSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
+		panel.setPreferredSize(new Dimension(MainFrame.MAXIMUM_SIZE, DEFAULT_HEIGHT));
+		return panel;
 	}
 }
