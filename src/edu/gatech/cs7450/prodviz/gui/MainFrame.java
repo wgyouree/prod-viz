@@ -17,13 +17,13 @@ public class MainFrame extends AppFrame {
 	public enum AppPanel {
 		GRAPH(new GraphPanel()), BAR(new BarPanel()), CONTROLS(new ControlsPanel());
 		
-		private JPanel panel;
+		private AppPanelImp panel;
 		
-		private AppPanel(JPanel panel) {
+		private AppPanel(AppPanelImp panel) {
 			this.panel = panel;
 		}
 		
-		public JPanel getPanel() {
+		public AppPanelImp getPanel() {
 			return this.panel;
 		}
 	}
@@ -68,6 +68,12 @@ public class MainFrame extends AppFrame {
 	}
 	
 	public void constructGUI(AppPanel main, AppPanel bottom, AppPanel right) {
+		main.getPanel().initComponents();
+		this.mainPanel.configureAsMainPanel(main.getPanel());
+		bottom.getPanel().initComponents();
+		this.bottomPanel.configureAsBottomPanel(bottom.getPanel());
+		right.getPanel().initComponents();
+		this.rightPanel.configureAsRightPanel(right.getPanel());
 		this.setMainPanel(main);
 		this.setBottomPanel(bottom);
 		this.setRightPanel(right);

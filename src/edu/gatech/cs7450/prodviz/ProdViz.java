@@ -1,17 +1,12 @@
 package edu.gatech.cs7450.prodviz;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
-import edu.gatech.cs7450.prodviz.data.Database;
-import edu.gatech.cs7450.prodviz.data.DatabaseConfig;
-import edu.gatech.cs7450.prodviz.data.products.BookDatabase;
 import edu.gatech.cs7450.prodviz.gui.MainFrame;
-import edu.gatech.cs7450.prodviz.imp.book.BookDatabaseConfig;
 
 public class ProdViz {
 
@@ -26,7 +21,7 @@ public class ProdViz {
 	public static void main(String[] args) {
 		// Create GUI
 		MainFrame mainFrame = new MainFrame(APP_NAME);
-
+		
 		// Create application context
 		ApplicationContext.initialize(initializeProductImps(), mainFrame);
 		
@@ -34,36 +29,48 @@ public class ProdViz {
 		ApplicationContext.getInstance().startApplication();
 	}
 	
-	public static ProductImp[] initializeProductImps() {
+	public static AbstractProduct[] initializeProductImps() {
 		try {
 			String className = ProdViz.class.getName();
 			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 			String path = impPackageName.replace('.', '/');
-	        List<Class> classes = findClasses(new File(path), impPackageName);
-	        List<ProductImp> imps = new ArrayList<ProductImp>();
+			Enumeration<URL> resources = classLoader.getResources(path);
+			List<File> dirs = new ArrayList<File>();
+	        while (resources.hasMoreElements()) {
+	            URL resource = resources.nextElement();
+	            dirs.add(new File(resource.getFile()));
+	        }
+	        List<Class> classes = new ArrayList<Class>();
+	        for (File directory : dirs) {
+	            classes.addAll(findClasses(directory, impPackageName));
+	        }
+	        List<AbstractProduct> imps = new ArrayList<AbstractProduct>();
 	        for (int i = 0; i < classes.size(); i++) {
 	        	Object o = classes.get(i).newInstance();
-	        	if (o instanceof ProductImp) {
-	        		imps.add((ProductImp)o);
+	        	if (o instanceof AbstractProduct) {
+	        		imps.add((AbstractProduct)o);
 	        	}
 	        }
-	        return imps.toArray(new ProductImp[imps.size()]);
-		} catch (ClassNotFoundException e) {
-			System.err.println(e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
+	        return imps.toArray(new AbstractProduct[imps.size()]);
+		} catch (Exception e) {
 			System.err.println(e.getMessage());
 			e.printStackTrace();
 		}
-		return new ProductImp[0];
+		return new AbstractProduct[0];
 	}
 	
     private static List<Class> findClasses(File directory, String packageName) throws ClassNotFoundException {
-        List<Class> classes = new ArrayList<Class>();
-    	File[] files = directory.listFiles();
+    	List<Class> classes = new ArrayList<Class>();
+        if (!directory.exists()) {
+            return classes;
+        }
+        File[] files = directory.listFiles();
         for (File file : files) {
-            if (!file.isDirectory() && file.getName().endsWith(".class")) {
-                classes.add(Class.forName(packageName + '.' + file.getName().substring(0, file.getName().length() - 6)));
+            if (file.isDirectory()) {
+                assert !file.getName().contains(".");
+                classes.addAll(findClasses(file, packageName + "." + file.getName()));
+            } else if (file.getName().endsWith("Imp.class")) {
+            	classes.add(Class.forName(packageName + '.' + file.getName().substring(0, file.getName().length() - 6)));
             }
         }
         return classes;

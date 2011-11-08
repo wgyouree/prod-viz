@@ -1,12 +1,12 @@
 package edu.gatech.cs7450.prodviz.imp.book;
 
-import edu.gatech.cs7450.prodviz.ProductImp;
+import edu.gatech.cs7450.prodviz.AbstractProduct;
 import edu.gatech.cs7450.prodviz.data.Database;
 import edu.gatech.cs7450.prodviz.data.DatabaseConfig;
 
-public class BookImp implements ProductImp {
+public class BookImp extends AbstractProduct {
 
-	private String name = "Book";
+	private String name = "Books";
 	private Database database;
 	
 	public BookImp() {
