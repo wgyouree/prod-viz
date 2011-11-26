@@ -6,6 +6,10 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
+import edu.gatech.cs7450.prodviz.data.AbstractProduct;
+import edu.gatech.cs7450.prodviz.data.Database;
+import edu.gatech.cs7450.prodviz.data.DatabaseConfig;
+import edu.gatech.cs7450.prodviz.data.IDatabaseConfig;
 import edu.gatech.cs7450.prodviz.gui.MainFrame;
 
 public class ProdViz {
@@ -22,8 +26,16 @@ public class ProdViz {
 		// Create GUI
 		MainFrame mainFrame = new MainFrame(APP_NAME);
 		
+		// Create database interface
+		IDatabaseConfig config = new DatabaseConfig(
+				"com.mysql.jdbc.Driver",
+				"jdbc:mysql://localhost:3306/",
+				"user",
+				"admin",
+				"admin");
+		
 		// Create application context
-		ApplicationContext.initialize(initializeProductImps(), mainFrame);
+		ApplicationContext.initialize(initializeProductImps(), mainFrame, new Database(config));
 		
 		// Start the application
 		ApplicationContext.getInstance().startApplication();

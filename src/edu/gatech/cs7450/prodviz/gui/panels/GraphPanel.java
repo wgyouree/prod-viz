@@ -2,6 +2,9 @@ package edu.gatech.cs7450.prodviz.gui.panels;
 
 import java.awt.Color;
 
+import prefuse.data.Graph;
+import prefuse.data.io.DataIOException;
+
 import edu.gatech.cs7450.prodviz.gui.AbstractAppPanel;
 
 public class GraphPanel extends AbstractAppPanel {
