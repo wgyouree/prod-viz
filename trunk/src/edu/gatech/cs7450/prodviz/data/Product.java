@@ -1,6 +1,5 @@
 package edu.gatech.cs7450.prodviz.data;
 
-
 public class Product extends PersistentObject {
 
 	private String name;

@@ -1,12 +1,11 @@
 package edu.gatech.cs7450.prodviz.data;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Map;
 
 public class PersistentObject {
 
 	private int ID;
-	private Set<PersistentAttribute> attributes = new HashSet<PersistentAttribute>();
+	private Map<String, Object> attributes;
 	
 	public void setID(int ID) {
 		this.ID = ID;
@@ -16,11 +15,11 @@ public class PersistentObject {
 		return this.ID;
 	}
 
-	public Set<PersistentAttribute> getAttributes() {
+	public Map<String, Object> getAttributes() {
 		return attributes;
 	}
 
-	public void setAttributes(Set<PersistentAttribute> attributes) {
+	public void setAttributes(Map<String, Object> attributes) {
 		this.attributes = attributes;
 	}
 }

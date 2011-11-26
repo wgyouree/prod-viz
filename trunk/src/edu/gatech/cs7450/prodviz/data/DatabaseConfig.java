@@ -1,8 +1,7 @@
-package edu.gatech.cs7450.prodviz.imp.book;
+package edu.gatech.cs7450.prodviz.data;
 
-import edu.gatech.cs7450.prodviz.data.IDatabaseConfig;
 
-public class BookDatabaseConfig implements IDatabaseConfig {
+public class DatabaseConfig implements IDatabaseConfig {
 
 	private String driver;
 	private String url;
@@ -10,7 +9,7 @@ public class BookDatabaseConfig implements IDatabaseConfig {
 	private String username;
 	private String password;
 	
-	public BookDatabaseConfig(String driver, String url, String databaseName, String username, String password) {
+	public DatabaseConfig(String driver, String url, String databaseName, String username, String password) {
 		this.driver = driver;
 		this.url = url;
 		this.databaseName = databaseName;
