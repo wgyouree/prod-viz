@@ -4,7 +4,8 @@ public class Product extends PersistentObject {
 
 	private String name;
 	
-	public Product(int ID, String name) {
+	public Product(String ID, String name) {
+		super(ID);
 		this.name = name;
 	}
 

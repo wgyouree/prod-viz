@@ -3,34 +3,73 @@ package edu.gatech.cs7450.prodviz.imp.book;
 import edu.gatech.cs7450.prodviz.data.AbstractProduct;
 import edu.gatech.cs7450.prodviz.data.Classifier;
 import edu.gatech.cs7450.prodviz.data.DatabaseConfig;
-import edu.gatech.cs7450.prodviz.data.Database;
-import edu.gatech.cs7450.prodviz.data.IDatabaseConfig;
+import edu.gatech.cs7450.prodviz.data.IReviewTableSchema;
+import edu.gatech.cs7450.prodviz.data.ITableSchema;
+import edu.gatech.cs7450.prodviz.data.SQLDatabase;
 
 public class BookImp extends AbstractProduct {
 
-	private String name = "Books";
-	private Database database;
-	
 	public BookImp() {
-		// Create database interface
-		IDatabaseConfig config = new DatabaseConfig(
-				"com.mysql.jdbc.Driver",
-				"jdbc:mysql://localhost:3306/",
-				"books",
-				"admin",
-				"admin");
-		this.database = new Database(config);
-		this.firstLevelClassifier = new Classifier("Genre");
-		this.secondLevelClassifier = new Classifier("Author");
-	}
-	
-	@Override
-	public Database getDatabase() {
-		return this.database;
-	}
-	
-	@Override
-	public String getName() {
-		return this.name;
+		super("Books",
+			  new Classifier("Genre"),
+			  new Classifier("Author"),
+			  new ITableSchema() {
+				
+				@Override
+				public String getTableName() {
+					return "`BX-Books`";
+				}
+				
+				@Override
+				public String getIdFieldName() {
+					return "ISBN";
+				}
+			  },
+			  new IReviewTableSchema() {
+					
+				@Override
+				public String getTableName() {
+					return "`BX-Book-Ratings`";
+				}
+				
+				@Override
+				public String getIdFieldName() {
+					return "`User-ID`,ISBN";
+				}
+				
+				@Override
+				public String getRatingFieldName() {
+					return "`Book-Rating'";
+				}
+				
+				@Override
+				public String getProductIdFieldName() {
+					return "ISBN";
+				}
+				
+				@Override
+				public String getUserIdFieldName() {
+					return "`User-ID`";
+				}
+			  },
+			  new ITableSchema() {
+					
+				@Override
+				public String getTableName() {
+					return "`BX-Users`";
+				}
+				
+				@Override
+				public String getIdFieldName() {
+					return "`User-ID`";
+				}
+			  });
+
+		  this.setDatabase(new SQLDatabase(this, new DatabaseConfig(
+			"com.mysql.jdbc.Driver",
+			"jdbc:mysql://localhost/",
+			"books",
+			"admin",
+			"admin")));
 	}
 }

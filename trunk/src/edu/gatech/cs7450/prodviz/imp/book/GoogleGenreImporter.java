@@ -36,10 +36,11 @@ public class GoogleGenreImporter {
 			// iterate over all books in database, extract Genre info, and update corresponding entry
 			Statement s = conn.createStatement();
 			ResultSet results = s.executeQuery("SELECT * FROM `BX-Books`");
+			int i = 0;
 			while (results.next()) {
 			
 				// wait briefly to not DOS the API server (0.5 seconds)
-				Thread.sleep(1 * 1010);
+				Thread.sleep(1 * 500);
 				
 				// udpate genre
 				String isbn = results.getString("ISBN");
@@ -50,7 +51,7 @@ public class GoogleGenreImporter {
 				ps.setString(2, isbn);
 				ps.executeUpdate();
 				
-				System.out.println(genre);
+				System.out.println("Found entry [" + ++i + "] with genre [" + genre + "]");
 			}
 			
 		} catch (Exception e) {

@@ -1,39 +1,39 @@
 package edu.gatech.cs7450.prodviz.data;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.util.Collection;
+import java.util.List;
 
-public class Database {
+public abstract class Database {
 
-	private IDatabaseConfig config;
-	private boolean initialized = false;
+	protected AbstractProduct product;
+	protected IDatabaseConfig config;
+	protected boolean initialized = false;
 	
-	public Database(IDatabaseConfig config) {
-		this.config = config;
-		this.initialize();
+	protected ITableSchema productTableSchema;
+	protected ITableSchema reviewTableSchema;
+	protected ITableSchema userTableSchema;
+	
+	protected Database(AbstractProduct product) {
+		this.product = product;
+		this.productTableSchema = product.getProductTableSchema();
+		this.reviewTableSchema = product.getReviewTableSchema();
+		this.userTableSchema = product.getUserTableSchema();
 	}
 	
-	public boolean initialize() {
-		try {
-			Class.forName(this.config.getDriver());
-			this.initialized = true;
-			return true;
-		} catch (ClassNotFoundException e) {
-			System.err.println(e.getMessage());
-			e.printStackTrace();
+	public abstract boolean initialize();
+	
+	public void ensureInitialized() {
+		if (!this.initialized) {
+			this.initialize();
 		}
-		return false;
-	}
-	
-	public Connection getConnection() throws SQLException {
-		return DriverManager.getConnection(
-				config.getUrl() + config.getDatabaseName(),
-				config.getUsername(),
-				config.getPassword());
 	}
 	
 	public boolean isInitialized() {
 		return this.initialized;
 	}
+	
+	public abstract List<User> getOtherUsersWithPositiveReviews(List<Product> product);
+
+	public abstract Collection<Product> getProductsRecommendedByUsers(Collection<User> otherUsers);
+
 }

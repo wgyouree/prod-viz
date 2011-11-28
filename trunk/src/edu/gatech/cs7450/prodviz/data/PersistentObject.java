@@ -4,14 +4,18 @@ import java.util.Map;
 
 public class PersistentObject {
 
-	private int ID;
+	private String ID;
 	private Map<String, Object> attributes;
 	
-	public void setID(int ID) {
+	public PersistentObject(String ID) {
 		this.ID = ID;
 	}
 	
-	public int getID() {
+	public void setID(String ID) {
+		this.ID = ID;
+	}
+	
+	public String getID() {
 		return this.ID;
 	}
 
