@@ -14,6 +14,9 @@ public class ApplicationContext {
 	private AppFrame mainFrame;
 	private ApplicationListener listener;
 	private Database userDatabase;
+	private AbstractProduct activeProduct;
+	
+	private static final int POSITIVE_RATING_THRESHHOLD = 5;
 	
 	private ApplicationContext(AbstractProduct[] products, AppFrame mainFrame, Database userDatabase) {
 		this.products = products;
@@ -42,6 +45,18 @@ public class ApplicationContext {
 	
 	public ActionListener getApplicationListener() {
 		return this.listener;
+	}
+	
+	public void setActiveProduct(AbstractProduct activeProduct) {
+		this.activeProduct = activeProduct;
+	}
+	
+	public AbstractProduct getActiveProduct() {
+		return this.activeProduct;
+	}
+	
+	public int getPositiveRatingThreshhold() {
+		return POSITIVE_RATING_THRESHHOLD;
 	}
 	
 	public void startApplication() {

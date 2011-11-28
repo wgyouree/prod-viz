@@ -18,7 +18,7 @@ public class Review extends PersistentObject {
 		return (Integer)this.getAttributes().get("userID");
 	}
 	
-	public int rating() {
+	public int getRating() {
 		return (Integer)this.getAttributes().get("rating");
 	}
 	
