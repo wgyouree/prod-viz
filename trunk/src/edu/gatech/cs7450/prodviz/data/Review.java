@@ -5,8 +5,8 @@ import java.util.Map;
 
 public class Review extends PersistentObject {
 
-	public Review(int ID, int userID, int rating, Product product) {
-		this.setID(ID);
+	public Review(String ID, int userID, int rating, Product product) {
+		super(ID);
 		Map<String, Object> attributes = new HashMap<String, Object>();
 		attributes.put("userID", userID);
 		attributes.put("rating", rating);

@@ -1,5 +1,7 @@
 package edu.gatech.cs7450.prodviz.data;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 
@@ -31,6 +33,8 @@ public abstract class Database {
 	public boolean isInitialized() {
 		return this.initialized;
 	}
+	
+	public abstract Connection getConnection() throws SQLException;
 	
 	public abstract List<User> getOtherUsersWithPositiveReviews(List<Product> product);
 
