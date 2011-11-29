@@ -3,6 +3,7 @@ package edu.gatech.cs7450.prodviz.imp.book;
 import edu.gatech.cs7450.prodviz.data.AbstractProduct;
 import edu.gatech.cs7450.prodviz.data.Classifier;
 import edu.gatech.cs7450.prodviz.data.DatabaseConfig;
+import edu.gatech.cs7450.prodviz.data.IProductTableSchema;
 import edu.gatech.cs7450.prodviz.data.IReviewTableSchema;
 import edu.gatech.cs7450.prodviz.data.ITableSchema;
 import edu.gatech.cs7450.prodviz.data.SQLDatabase;
@@ -13,7 +14,7 @@ public class BookImp extends AbstractProduct {
 		super("Books",
 			  new Classifier("Genre"),
 			  new Classifier("Author"),
-			  new ITableSchema() {
+			  new IProductTableSchema() {
 				
 				@Override
 				public String getTableName() {
@@ -23,6 +24,21 @@ public class BookImp extends AbstractProduct {
 				@Override
 				public String getIdFieldName() {
 					return "ISBN";
+				}
+				
+				@Override
+				public String getNameFieldName() {
+					return "`Book-Title`";
+				}
+				
+				@Override
+				public String getFirstLevelClassifierFieldName() {
+					return "genre";
+				}
+				
+				@Override
+				public String getSecondLevelClassifierFieldName() {
+					return "`Book-Author`";
 				}
 			  },
 			  new IReviewTableSchema() {

@@ -85,11 +85,19 @@ public class SQLDatabase extends Database {
 		String reviewTableName = this.product.getReviewTableSchema().getTableName();
 		String reviewProductIdField = this.product.getReviewTableSchema().getProductIdFieldName();
 		String reviewUserIdField = this.product.getReviewTableSchema().getUserIdFieldName();
+		
+		String productTableName = this.product.getProductTableSchema().getTableName();
+		String productIdField = this.product.getProductTableSchema().getIdFieldName();
+		String productNameField = this.product.getProductTableSchema().getNameFieldName();
+		String productFirstLevelClassifierField = this.product.getProductTableSchema().getFirstLevelClassifierFieldName();
+		String productSecondLevelClassifierField = this.product.getProductTableSchema().getSecondLevelClassifierFieldName();
 
 		List<Product> result = new ArrayList<Product>();
 		
 		try {
 			Connection conn = getConnection();
+			
+			List<String> productIds = new ArrayList<String>();
 			
 			Iterator<User> userIt = otherUsers.iterator();
 			while (userIt.hasNext()) {
@@ -102,7 +110,26 @@ public class SQLDatabase extends Database {
 				
 				ResultSet results = pr.executeQuery();
 				while (results.next()) {
-					Product product = new Product(results.getString(reviewProductIdField), "none");
+					productIds.add(results.getString(reviewProductIdField));
+				}
+			}
+			
+			Iterator<String> productIdsIt = productIds.iterator();
+			while (productIdsIt.hasNext()) {
+				String productId = productIdsIt.next();
+				
+				PreparedStatement pr = conn.prepareStatement("SELECT * FROM ? WHERE ?=?");
+				pr.setString(1, productTableName);
+				pr.setString(2, productIdField);
+				pr.setString(3, productId);
+				
+				ResultSet results = pr.executeQuery();
+				while (results.next()) {
+					Product product = new Product(
+											results.getString(productIdField),
+											results.getString(productNameField),
+											results.getString(productFirstLevelClassifierField),
+											results.getString(productSecondLevelClassifierField));
 					result.add(product);
 				}
 			}
