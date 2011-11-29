@@ -17,6 +17,7 @@ public class ApplicationContext {
 	private AbstractProduct activeProduct;
 	
 	private static final int POSITIVE_RATING_THRESHHOLD = 5;
+	private static final int RECURSIVE_RECOMMENDER_DEPTH = 2;
 	
 	private ApplicationContext(AbstractProduct[] products, AppFrame mainFrame, Database userDatabase) {
 		this.products = products;
@@ -57,6 +58,10 @@ public class ApplicationContext {
 	
 	public int getPositiveRatingThreshhold() {
 		return POSITIVE_RATING_THRESHHOLD;
+	}
+	
+	public int getRecursiveRecommenderDepth() {
+		return RECURSIVE_RECOMMENDER_DEPTH;
 	}
 	
 	public void startApplication() {
