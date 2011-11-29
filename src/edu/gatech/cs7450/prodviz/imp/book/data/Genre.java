@@ -7,8 +7,8 @@ import edu.gatech.cs7450.prodviz.data.PersistentObject;
 
 public class Genre extends PersistentObject {
 
-	public Genre(int ID, String name) {
-		this.setID(ID);
+	public Genre(String ID, String name) {
+		super(ID);
 		Map<String, Object> attributes = new HashMap<String, Object>();
 		attributes.put("name", name);
 		this.setAttributes(attributes);

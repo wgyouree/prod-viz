@@ -13,23 +13,21 @@ public class ApplicationContext {
 	private AbstractProduct[] products;
 	private AppFrame mainFrame;
 	private ApplicationListener listener;
-	private Database userDatabase;
 	private AbstractProduct activeProduct;
 	
 	private static final int POSITIVE_RATING_THRESHHOLD = 5;
 	private static final int RECURSIVE_RECOMMENDER_DEPTH = 2;
 	
-	private ApplicationContext(AbstractProduct[] products, AppFrame mainFrame, Database userDatabase) {
+	private ApplicationContext(AbstractProduct[] products, AppFrame mainFrame) {
 		this.products = products;
 		this.mainFrame = mainFrame;
 		this.listener = new ApplicationListener(this);
-		this.userDatabase = userDatabase;
 	}
 	
 	private static ApplicationContext INSTANCE;
 	
-	public static void initialize(AbstractProduct[] products, AppFrame mainFrame, Database userDatabase) {
-		INSTANCE = new ApplicationContext(products, mainFrame, userDatabase);
+	public static void initialize(AbstractProduct[] products, AppFrame mainFrame) {
+		INSTANCE = new ApplicationContext(products, mainFrame);
 	}
 	
 	public static ApplicationContext getInstance() {

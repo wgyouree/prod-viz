@@ -6,7 +6,8 @@ import edu.gatech.cs7450.prodviz.data.PersistentObject;
 
 public class Author extends PersistentObject {
 
-	public Author(int ID, String name, Set<Book> books) {
+	public Author(String ID, String name, Set<Book> books) {
+		super(ID);
 		
 	}
 }

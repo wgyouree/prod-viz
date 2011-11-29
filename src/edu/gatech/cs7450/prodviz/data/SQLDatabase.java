@@ -33,7 +33,7 @@ public class SQLDatabase extends Database {
 		return false;
 	}
 	
-	private Connection getConnection() throws SQLException {
+	public Connection getConnection() throws SQLException {
 		return DriverManager.getConnection(
 				config.getUrl() + config.getDatabaseName(),
 				config.getUsername(),

@@ -11,7 +11,7 @@ public class Book extends Product {
 	private String imageUrlL;
 	
 	public Book(String ID, String title, int authorID, int genreID, String imageUrlS, String imageUrlM, String imageUrlL) {
-		super(ID, title);
+		super(ID, title, "genre", "author");
 		this.authorID = authorID;
 		this.genreID = genreID;
 		this.imageUrlS = imageUrlS;

@@ -9,6 +9,7 @@ import java.sql.Statement;
 import edu.gatech.cs7450.prodviz.data.Database;
 import edu.gatech.cs7450.prodviz.data.DatabaseConfig;
 import edu.gatech.cs7450.prodviz.data.IDatabaseConfig;
+import edu.gatech.cs7450.prodviz.data.SQLDatabase;
 
 public class GoogleGenreImporter {
 
@@ -30,13 +31,13 @@ public class GoogleGenreImporter {
 					"books",
 					"admin",
 					"admin");
-			Database database = new Database(config);
+			Database database = new SQLDatabase(new BookImp(), config);
 			conn = database.getConnection();
 			
 			// iterate over all books in database, extract Genre info, and update corresponding entry
 			Statement s = conn.createStatement();
-			ResultSet results = s.executeQuery("SELECT * FROM `BX-Books`");
-			int i = 0;
+			ResultSet results = s.executeQuery("SELECT * FROM `BX-Books` WHERE genre IS NULL");
+			int i = 31267;
 			while (results.next()) {
 			
 				// wait briefly to not DOS the API server (0.5 seconds)

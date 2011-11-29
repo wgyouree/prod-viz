@@ -35,7 +35,7 @@ public class ProdViz {
 				"admin");
 		
 		// Create application context
-		ApplicationContext.initialize(initializeProductImps(), mainFrame, new Database(config));
+		ApplicationContext.initialize(initializeProductImps(), mainFrame);
 		
 		// Start the application
 		ApplicationContext.getInstance().startApplication();
