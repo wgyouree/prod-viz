@@ -39,6 +39,8 @@ public class AmazonAPI {
 		return INSTANCE;
 	}
 	
+	
+	
 	public AmazonReview[] extractReviews(String url) {
 		
 		List<AmazonReview> reviews = new ArrayList<AmazonReview>();
