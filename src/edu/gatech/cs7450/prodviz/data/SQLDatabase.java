@@ -129,7 +129,8 @@ public class SQLDatabase extends Database {
 											results.getString(productIdField),
 											results.getString(productNameField),
 											results.getString(productFirstLevelClassifierField),
-											results.getString(productSecondLevelClassifierField));
+											results.getString(productSecondLevelClassifierField)
+											);
 					result.add(product);
 				}
 			}
