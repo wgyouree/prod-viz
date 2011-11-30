@@ -86,6 +86,7 @@ public class Product extends PersistentObject {
 				book.setPublisher (item.getItemAttributes().getPublisher());
 				book.setPublishDate( item.getItemAttributes().getPublicationDate());
 				book.setSalesRank (item.getSalesRank());
+				book.setImageUrlL(item.getImageSets().get(0).getImageSet().get(0).getLargeImage().getURL());
 				book.setImageUrlM (item.getImageSets().get(0).getImageSet().get(0).getMediumImage().getURL());
 				book.setImageUrlS(item.getImageSets().get(0).getImageSet().get(0).getSmallImage().getURL());
 				book.setImageUrlSS (item.getImageSets().get(0).getImageSet().get(0).getSwatchImage().getURL());

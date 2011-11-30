@@ -14,6 +14,7 @@ public class BookInformation {
 	private String publisher;
 	private String publishDate;
 	private String salesRank;
+	private String imageUrlL;
 	private String imageUrlM;
 	private String imageUrlS;
 	private String imageUrlSS;
@@ -59,6 +60,9 @@ public class BookInformation {
 	}
 	public void setSalesRank(String salesRank){
 		this.salesRank = salesRank;
+	}
+	public void setImageUrlL(String imageUrlL){
+		this.imageUrlL = imageUrlL;
 	}
 	public void setImageUrlM(String imageUrlM){
 		this.imageUrlM = imageUrlM;
@@ -124,6 +128,9 @@ public class BookInformation {
 	}
 	public String getSalesRank(){
 		return salesRank;
+	}
+	public String getImageUrlL(){
+		return imageUrlL;
 	}
 	public String getImageUrlM(){
 		return imageUrlM;
