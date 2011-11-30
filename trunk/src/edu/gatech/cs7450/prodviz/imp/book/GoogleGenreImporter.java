@@ -34,10 +34,14 @@ public class GoogleGenreImporter {
 			Database database = new SQLDatabase(new BookImp(), config);
 			conn = database.getConnection();
 			
-			// iterate over all books in database, extract Genre info, and update corresponding entry
+			// how many books already have a genre
 			Statement s = conn.createStatement();
-			ResultSet results = s.executeQuery("SELECT * FROM `BX-Books` WHERE genre IS NULL");
-			int i = 31267;
+			ResultSet results = s.executeQuery("SELECT COUNT(*) FROM `BX-Books` WHERE genre IS NOT NULL");
+			int i = results.getInt(1);
+			
+			// iterate over all books in database, extract Genre info, and update corresponding entry
+			s = conn.createStatement();
+			results = s.executeQuery("SELECT * FROM `BX-Books` WHERE genre IS NULL");
 			while (results.next()) {
 			
 				// wait briefly to not DOS the API server (0.5 seconds)

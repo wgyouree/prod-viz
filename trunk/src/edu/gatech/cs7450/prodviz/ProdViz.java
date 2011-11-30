@@ -7,7 +7,6 @@ import java.util.Enumeration;
 import java.util.List;
 
 import edu.gatech.cs7450.prodviz.data.AbstractProduct;
-import edu.gatech.cs7450.prodviz.data.Database;
 import edu.gatech.cs7450.prodviz.data.DatabaseConfig;
 import edu.gatech.cs7450.prodviz.data.IDatabaseConfig;
 import edu.gatech.cs7450.prodviz.gui.MainFrame;
@@ -29,7 +28,7 @@ public class ProdViz {
 		// Create database interface
 		IDatabaseConfig config = new DatabaseConfig(
 				"com.mysql.jdbc.Driver",
-				"jdbc:mysql://localhost:3306/",
+				"jdbc:mysql://localhost/",
 				"user",
 				"admin",
 				"admin");

@@ -55,7 +55,7 @@ public class BookImp extends AbstractProduct {
 				
 				@Override
 				public String getRatingFieldName() {
-					return "`Book-Rating'";
+					return "`Book-Rating`";
 				}
 				
 				@Override

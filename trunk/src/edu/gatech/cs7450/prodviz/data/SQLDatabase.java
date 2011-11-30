@@ -57,16 +57,13 @@ public class SQLDatabase extends Database {
 			while (productIt.hasNext()) {
 				Product nextProduct = productIt.next();
 				
-				PreparedStatement pr = conn.prepareStatement("SELECT * FROM ? WHERE ?>=? && ?=?");
-				pr.setString(1, reviewTableName);
-				pr.setString(2, reviewRatingField);
-				pr.setInt(3, ApplicationContext.getInstance().getPositiveRatingThreshhold());
-				pr.setString(4, reviewProductIdField);
-				pr.setString(5, nextProduct.getID());
+				PreparedStatement pr = conn.prepareStatement("SELECT * FROM " + reviewTableName + " WHERE " + reviewRatingField + ">=? AND " + reviewProductIdField + "=?");
+				pr.setInt(1, ApplicationContext.getInstance().getPositiveRatingThreshhold());
+				pr.setString(2, nextProduct.getID());
 				
 				ResultSet results = pr.executeQuery();
 				while (results.next()) {
-					User user = new User(results.getInt(reviewUserIdField) + "", "none");
+					User user = new User(results.getInt(1) + "", "none");
 					result.add(user);
 				}
 			}
@@ -103,10 +100,9 @@ public class SQLDatabase extends Database {
 			while (userIt.hasNext()) {
 				User nextUser = userIt.next();
 				
-				PreparedStatement pr = conn.prepareStatement("SELECT * FROM ? WHERE ?=?");
-				pr.setString(1, reviewTableName);
-				pr.setString(2, reviewUserIdField);
-				pr.setString(3, nextUser.getID());
+				PreparedStatement pr = conn.prepareStatement("SELECT * FROM " + reviewTableName + " WHERE " + reviewUserIdField + "=?");
+				pr.setInt(1, Integer.parseInt(nextUser.getID()));
+				//System.out.println(pr.toString());
 				
 				ResultSet results = pr.executeQuery();
 				while (results.next()) {
@@ -118,19 +114,17 @@ public class SQLDatabase extends Database {
 			while (productIdsIt.hasNext()) {
 				String productId = productIdsIt.next();
 				
-				PreparedStatement pr = conn.prepareStatement("SELECT * FROM ? WHERE ?=?");
-				pr.setString(1, productTableName);
-				pr.setString(2, productIdField);
-				pr.setString(3, productId);
+				PreparedStatement pr = conn.prepareStatement("SELECT * FROM " + productTableName + " WHERE " + productIdField + "=? AND genre IS NOT NULL");
+				pr.setString(1, productId);
+				//System.out.println(pr.toString());
 				
 				ResultSet results = pr.executeQuery();
 				while (results.next()) {
 					Product product = new Product(
-											results.getString(productIdField),
-											results.getString(productNameField),
-											results.getString(productFirstLevelClassifierField),
-											results.getString(productSecondLevelClassifierField)
-											);
+											results.getString(1),
+											results.getString(2),
+											results.getString(9),
+											results.getString(3));
 					result.add(product);
 				}
 			}
