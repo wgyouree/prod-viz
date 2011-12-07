@@ -36,13 +36,13 @@ public class GoogleGenreImporter {
 			
 			// how many books already have a genre
 			Statement s = conn.createStatement();
-			ResultSet results = s.executeQuery("SELECT COUNT(*) FROM `BX-Books` WHERE genre IS NOT NULL");
+			ResultSet results = s.executeQuery("SELECT COUNT(*) FROM BX_Books WHERE genre IS NOT NULL");
 			results.next();
 			int i = results.getInt(1);
 			
 			// iterate over all books in database, extract Genre info, and update corresponding entry
 			s = conn.createStatement();
-			results = s.executeQuery("SELECT * FROM `BX-Books` WHERE genre IS NULL");
+			results = s.executeQuery("SELECT * FROM BX_Books WHERE genre IS NULL");
 			while (results.next()) {
 			
 				// wait briefly to not DOS the API server (0.5 seconds)
@@ -52,7 +52,7 @@ public class GoogleGenreImporter {
 				String isbn = results.getString("ISBN");
 				String genre = GoogleBooksApi.getInstance().getGenre(isbn);
 				
-				PreparedStatement ps = conn.prepareStatement("UPDATE `BX-Books` SET genre=? WHERE ISBN=?");
+				PreparedStatement ps = conn.prepareStatement("UPDATE BX_Books SET genre=? WHERE ISBN=?");
 				ps.setString(1, genre);
 				ps.setString(2, isbn);
 				ps.executeUpdate();
