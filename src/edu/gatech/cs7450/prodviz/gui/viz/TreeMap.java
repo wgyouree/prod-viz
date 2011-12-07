@@ -10,6 +10,7 @@ import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 import java.awt.event.MouseEvent;
+import java.util.Iterator;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -23,22 +24,32 @@ import prefuse.action.ActionList;
 import prefuse.action.RepaintAction;
 import prefuse.action.animate.ColorAnimator;
 import prefuse.action.assignment.ColorAction;
+import prefuse.action.layout.Layout;
 import prefuse.action.layout.graph.SquarifiedTreeMapLayout;
 import prefuse.controls.ControlAdapter;
+import prefuse.controls.ZoomToFitControl;
+import prefuse.data.Schema;
 import prefuse.data.Tree;
+import prefuse.data.expression.Predicate;
+import prefuse.data.expression.parser.ExpressionParser;
 import prefuse.data.query.SearchQueryBinding;
+import prefuse.render.AbstractShapeRenderer;
 import prefuse.render.DefaultRendererFactory;
+import prefuse.render.LabelRenderer;
 import prefuse.render.ShapeRenderer;
 import prefuse.util.ColorLib;
 import prefuse.util.ColorMap;
 import prefuse.util.FontLib;
+import prefuse.util.PrefuseLib;
 import prefuse.util.UpdateListener;
 import prefuse.util.ui.JFastLabel;
 import prefuse.util.ui.JSearchPanel;
 import prefuse.util.ui.UILib;
+import prefuse.visual.DecoratorItem;
 import prefuse.visual.NodeItem;
 import prefuse.visual.VisualItem;
 import prefuse.visual.VisualTree;
+import prefuse.visual.expression.InGroupPredicate;
 import prefuse.visual.sort.TreeDepthItemSorter;
 
 /**
@@ -53,10 +64,20 @@ import prefuse.visual.sort.TreeDepthItemSorter;
 public class TreeMap extends Display {
 
 	private static final long serialVersionUID = 1L;
-	
-	private static final String tree = "tree";
-	private static final String treeNodes = "tree.nodes";
-	private static final String treeEdges = "tree.edges";
+
+    
+    // create data description of labels, setting colors, fonts ahead of time
+    private static final Schema LABEL_SCHEMA = PrefuseLib.getVisualItemSchema();
+    static {
+        LABEL_SCHEMA.setDefault(VisualItem.INTERACTIVE, false);
+        LABEL_SCHEMA.setDefault(VisualItem.TEXTCOLOR, ColorLib.gray(200));
+        LABEL_SCHEMA.setDefault(VisualItem.FONT, FontLib.getFont("Tahoma",16));
+    }
+    
+    private static final String tree = "tree";
+    private static final String treeNodes = "tree.nodes";
+    private static final String treeEdges = "tree.edges";
+    private static final String labels = "labels";
 	
 	private SearchQueryBinding searchQ;
 	
@@ -69,20 +90,35 @@ public class TreeMap extends Display {
 	private TreeMap(Tree t, String label) {
 		super(new Visualization());
 		
+		// add the tree to the visualization
 		VisualTree vt = m_vis.addTree(tree, t);
 		m_vis.setVisible(treeEdges, null, false);
 		
-		m_vis.setRendererFactory(new DefaultRendererFactory(new TreeMapRenderer(label)));
+		// ensure that only leaf nodes are interactive
+        Predicate noLeaf = (Predicate)ExpressionParser.parse("childcount()>0");
+        m_vis.setInteractive(treeNodes, noLeaf, false);
+		
+		// add labels to the visualization
+        // first create a filter to show labels only at top-level nodes
+        Predicate labelP = (Predicate)ExpressionParser.parse("treedepth()=1");
+        // now create the labels as decorators of the nodes
+        m_vis.addDecorators(labels, treeNodes, labelP, LABEL_SCHEMA);
+
+        // set up the renderers - one for nodes and one for labels
+        DefaultRendererFactory rf = new DefaultRendererFactory();
+        rf.add(new InGroupPredicate(treeNodes), new NodeRenderer());
+        rf.add(new InGroupPredicate(labels), new LabelRenderer(label));
+		m_vis.setRendererFactory(rf);
 		
 		// border colors
         final ColorAction borderColor = new BorderColorAction(treeNodes);
         final ColorAction fillColor = new FillColorAction(treeNodes);
         
-        // full paint
-        ActionList fullPaint = new ActionList();
-        fullPaint.add(fillColor);
-        fullPaint.add(borderColor);
-        m_vis.putAction("fullPaint", fullPaint);
+        // color settings
+        ActionList colors = new ActionList();
+        colors.add(fillColor);
+        colors.add(borderColor);
+        m_vis.putAction("colors", colors);
         
         // animate paint change
         ActionList animatePaint = new ActionList(400);
@@ -93,8 +129,8 @@ public class TreeMap extends Display {
         // create the single filtering and layout action list
         ActionList layout = new ActionList();
         layout.add(new SquarifiedTreeMapLayout(tree));
-        layout.add(fillColor);
-        layout.add(borderColor);
+        layout.add(new LabelLayout(labels));
+        layout.add(colors);
         layout.add(new RepaintAction());
         m_vis.putAction("layout", layout);
         
@@ -118,7 +154,7 @@ public class TreeMap extends Display {
         	
             public void update(Object src) {
                 m_vis.cancel("animatePaint");
-                m_vis.run("fullPaint");
+                m_vis.run("colors");
                 m_vis.run("animatePaint");
             }
         });
@@ -157,11 +193,21 @@ public class TreeMap extends Display {
         
         treemap.addControlListener(new ControlAdapter() {
             public void itemEntered(VisualItem item, MouseEvent e) {
-                title.setText(item.getString(label));
+            	String name = item.getString("name");
+            	String[] peices = name.split("[\\:]");
+                title.setText(peices[1]);
             }
             public void itemExited(VisualItem item, MouseEvent e) {
                 title.setText(null);
             }
+        });
+        
+        //treemap.addControlListener(new ZoomToFitControl("tree.nodes"));
+        
+        treemap.addControlListener(new ZoomToFitControl() {
+        	public void itemClicked(VisualItem item, MouseEvent e) {
+        		System.out.println(item.getGroup());
+        	}
         });
         
         Box box = UILib.getBox(new Component[]{title,search}, true, 10, 3, 0);
@@ -173,7 +219,7 @@ public class TreeMap extends Display {
         return panel;
     }
     
-	// ------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
     
     /**
      * Set the stroke color for drawing treemap node outlines. A graded
@@ -201,8 +247,8 @@ public class TreeMap extends Display {
             }
         }
     }
-	
-	/**
+    
+    /**
      * Set fill colors for treemap nodes. Search items are colored
      * in pink, while normal nodes are shaded according to their
      * depth in the tree.
@@ -217,60 +263,78 @@ public class TreeMap extends Display {
         }
         
         public int getColor(VisualItem item) {
-            if ( m_vis.isInGroup(item, Visualization.SEARCH_ITEMS) )
-                return ColorLib.rgb(191,99,130);
-            
-            double v = (item instanceof NodeItem ? ((NodeItem)item).getDepth():0);
-            return cmap.getColor(v);
+            if ( item instanceof NodeItem ) {
+                NodeItem nitem = (NodeItem)item;
+                if ( nitem.getChildCount() > 0 ) {
+                    return 0; // no fill for parent nodes
+                } else {
+                    if ( m_vis.isInGroup(item, Visualization.SEARCH_ITEMS) )
+                        return ColorLib.rgb(191,99,130);
+                    else {
+                    	String name = nitem.getString("name");
+                    	String[] peices = name.split("[\\:]");
+                        return getWeightColor(Integer.parseInt(peices[0]));
+                    }
+                }
+            } else {
+                return cmap.getColor(0);
+            }
         }
         
     } // end of inner class TreeMapColorAction
-	
-	
-	/**
-     * A renderer for treemap nodes. Draws simple rectangles, but defers
-     * the bounds management to the layout. Leaf nodes are drawn fully,
-     * higher level nodes only have their outlines drawn. Labels are
-     * rendered for top-level (i.e., depth 1) subtrees.
+    
+    private static int getWeightColor(int weight) {
+    	int r = 0;
+    	int g = 0;
+    	int b = 0;
+    	
+    	if (weight <= 5) {
+    		int diff = 5 - weight;
+    		r = (new Long(Math.round(0.1 * diff * 255)).intValue());
+    	} else if (weight > 5) {
+    		int diff = 10 - weight;
+    		g = (new Long(Math.round(0.1 * diff * 255)).intValue());
+    	}
+    	
+    	return ColorLib.rgb(r, g, b);
+    }
+    
+    /**
+     * Set label positions. Labels are assumed to be DecoratorItem instances,
+     * decorating their respective nodes. The layout simply gets the bounds
+     * of the decorated node and assigns the label coordinates to the center
+     * of those bounds.
      */
-    public static class TreeMapRenderer extends ShapeRenderer {
-        private Rectangle2D m_bounds = new Rectangle2D.Double();
-        private String m_label;
-        
-        public TreeMapRenderer(String label) {
-            m_manageBounds = false;
-            m_label = label;
+    public static class LabelLayout extends Layout {
+        public LabelLayout(String group) {
+            super(group);
         }
-        public int getRenderType(VisualItem item) {
-            if ( ((NodeItem)item).getChildCount() == 0 ) {
-                // if a leaf node, both draw and fill the node
-                return RENDER_TYPE_DRAW_AND_FILL;
-            } else {
-                // if not a leaf, only draw the node outline
-                return RENDER_TYPE_DRAW;
+        public void run(double frac) {
+            Iterator iter = m_vis.items(m_group);
+            while ( iter.hasNext() ) {
+                DecoratorItem item = (DecoratorItem)iter.next();
+                VisualItem node = item.getDecoratedItem();
+                Rectangle2D bounds = node.getBounds();
+                setX(item, null, bounds.getCenterX());
+                setY(item, null, bounds.getCenterY());
             }
+        }
+    } // end of inner class LabelLayout
+    
+    /**
+     * A renderer for treemap nodes. Draws simple rectangles, but defers
+     * the bounds management to the layout.
+     */
+    public static class NodeRenderer extends AbstractShapeRenderer {
+        private Rectangle2D m_bounds = new Rectangle2D.Double();
+        
+        public NodeRenderer() {
+            m_manageBounds = false;
         }
         protected Shape getRawShape(VisualItem item) {
             m_bounds.setRect(item.getBounds());
             return m_bounds;
         }
-        
-        public void render(Graphics2D g, VisualItem item) {
-            super.render(g, item);
-            // if a top-level node, draw the category name
-            if ( ((NodeItem)item).getDepth() == 1 ) {
-                Rectangle2D b = item.getBounds();
-                String s = item.getString(m_label);
-                Font f = item.getFont();
-                FontMetrics fm = g.getFontMetrics(f);
-                int w = fm.stringWidth(s);
-                int h = fm.getAscent();
-                g.setColor(Color.LIGHT_GRAY);
-                g.drawString(s, (float)(b.getCenterX()-w/2.0),
-                                (float)(b.getCenterY()+h/2));
-            }
-        }
-        
     } // end of inner class NodeRenderer
     
 } // end of class TreeMap

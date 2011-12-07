@@ -50,10 +50,10 @@ public class BFSRecommender implements IRecommender {
 		while (otherProductsIt.hasNext()) {
 			Product otherProduct = otherProductsIt.next();
 			if (!recommendations.containsKey(otherProduct)) {
-				recommendations.put(otherProduct, new ProductRecommendation(otherProduct, 1));
+				recommendations.put(otherProduct, new ProductRecommendation(otherProduct, otherProduct.getCummulativeRating()));
 			} else {
 				ProductRecommendation currRecommendation = recommendations.get(otherProduct);
-				currRecommendation.setWeight(currRecommendation.getWeight() + 1);
+				currRecommendation.setWeight(currRecommendation.getWeight() + otherProduct.getCummulativeRating());
 			}
 		}
 		

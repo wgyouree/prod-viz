@@ -6,8 +6,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import java.sql.PreparedStatement;
 
@@ -46,7 +48,6 @@ public class SQLDatabase extends Database {
 		String reviewTableName = this.product.getReviewTableSchema().getTableName();
 		String reviewRatingField = this.product.getReviewTableSchema().getRatingFieldName();
 		String reviewProductIdField = this.product.getReviewTableSchema().getProductIdFieldName();
-		String reviewUserIdField = this.product.getReviewTableSchema().getUserIdFieldName();
 		
 		List<User> result = new ArrayList<User>();
 		
@@ -82,11 +83,12 @@ public class SQLDatabase extends Database {
 		String reviewTableName = this.product.getReviewTableSchema().getTableName();
 		String reviewProductIdField = this.product.getReviewTableSchema().getProductIdFieldName();
 		String reviewUserIdField = this.product.getReviewTableSchema().getUserIdFieldName();
+		String reviewRatingField = this.product.getReviewTableSchema().getRatingFieldName();
 		
 		String productTableName = this.product.getProductTableSchema().getTableName();
 		String productIdField = this.product.getProductTableSchema().getIdFieldName();
 		String productNameField = this.product.getProductTableSchema().getNameFieldName();
-		String productFirstLevelClassifierField = this.product.getProductTableSchema().getFirstLevelClassifierFieldName();
+		String productFirstLevelClassiferField = this.product.getProductTableSchema().getFirstLevelClassifierFieldName();
 		String productSecondLevelClassifierField = this.product.getProductTableSchema().getSecondLevelClassifierFieldName();
 
 		List<Product> result = new ArrayList<Product>();
@@ -94,37 +96,43 @@ public class SQLDatabase extends Database {
 		try {
 			Connection conn = getConnection();
 			
-			List<String> productIds = new ArrayList<String>();
+			Map<String, Integer> productIds = new HashMap<String, Integer>();
 			
 			Iterator<User> userIt = otherUsers.iterator();
 			while (userIt.hasNext()) {
 				User nextUser = userIt.next();
 				
-				PreparedStatement pr = conn.prepareStatement("SELECT * FROM " + reviewTableName + " WHERE " + reviewUserIdField + "=?");
+				PreparedStatement pr = conn.prepareStatement("SELECT * FROM " + reviewTableName + " WHERE " + reviewUserIdField + "=? LIMIT " +
+						ApplicationContext.getInstance().getNumberOfRatingsCeiling());
 				pr.setInt(1, Integer.parseInt(nextUser.getID()));
-				//System.out.println(pr.toString());
 				
 				ResultSet results = pr.executeQuery();
 				while (results.next()) {
-					productIds.add(results.getString(reviewProductIdField));
+					int rating = results.getInt(reviewRatingField);
+					if (rating >= ApplicationContext.getInstance().getPositiveRatingThreshhold()) {
+						productIds.put(results.getString(reviewProductIdField), results.getInt(reviewRatingField));
+					}
 				}
 			}
 			
-			Iterator<String> productIdsIt = productIds.iterator();
+			Iterator<String> productIdsIt = productIds.keySet().iterator();
 			while (productIdsIt.hasNext()) {
 				String productId = productIdsIt.next();
 				
-				PreparedStatement pr = conn.prepareStatement("SELECT * FROM " + productTableName + " WHERE " + productIdField + "=? AND genre IS NOT NULL");
+				PreparedStatement pr = conn.prepareStatement("SELECT * FROM " + productTableName + " WHERE " + 
+						productIdField + "=? AND " + productFirstLevelClassiferField + " IS NOT NULL AND " + 
+						productSecondLevelClassifierField + " IS NOT NULL");
+				
 				pr.setString(1, productId);
-				//System.out.println(pr.toString());
 				
 				ResultSet results = pr.executeQuery();
 				while (results.next()) {
 					Product product = new Product(
-											results.getString(1),
-											results.getString(2),
-											results.getString(9),
-											results.getString(3));
+											results.getString(productIdField),
+											results.getString(productNameField),
+											results.getString(productFirstLevelClassiferField),
+											results.getString(productSecondLevelClassifierField));
+					product.setCummulativeRating(productIds.get(productId));
 					result.add(product);
 				}
 			}
