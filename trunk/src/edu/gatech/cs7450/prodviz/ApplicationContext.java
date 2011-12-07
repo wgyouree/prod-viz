@@ -24,7 +24,8 @@ public class ApplicationContext {
 	private IRecommender activeRecommender;
 	
 	private static final int POSITIVE_RATING_THRESHHOLD = 5;
-	private static final int RECURSIVE_RECOMMENDER_DEPTH = 2;
+	private static final int RECURSIVE_RECOMMENDER_DEPTH = 1;
+	private static final int NUMBER_OF_RATINGS_CEILING = 1000;
 	
 	private ApplicationContext(AbstractProduct[] products, AppFrame mainFrame) {
 		this.products = products;
@@ -32,8 +33,8 @@ public class ApplicationContext {
 		this.listener = new ApplicationListener(this);
 		
 		// defaults
-		this.activeUser = new User("1", "MyNameHere");
-		this.activeUser.addReview(new Review("1", 1, 7, new Product("1570719586", "God-Shaped Hole", "Genre", "Author")));
+		this.activeUser = new User("300000", "Your Name Here");
+		this.activeUser.addReview(new Review("1", 1, 8, new Product("1570719586", "God-Shaped Hole", "Genre", "Author")));
 		this.activeRecommender = new BFSRecommender();
 		this.activeProduct = new BookImp();
 	}
@@ -82,6 +83,10 @@ public class ApplicationContext {
 	
 	public IRecommender getActiveRecommender() {
 		return this.activeRecommender;
+	}
+	
+	public int getNumberOfRatingsCeiling() {
+		return NUMBER_OF_RATINGS_CEILING;
 	}
 	
 	public void startApplication() {

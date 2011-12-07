@@ -2,10 +2,13 @@ package edu.gatech.cs7450.prodviz.gui.viz;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringBufferInputStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -43,6 +46,7 @@ public class TreeMapGenerator {
 	public static class Node {
 		
 		private String value;
+		private int weight = 1;
 		private List<Node> children = new ArrayList<Node>();
 		
 		public Node(String value) {
@@ -64,6 +68,14 @@ public class TreeMapGenerator {
 		public void addChild(Node child) {
 			this.children.add(child);
 		}
+
+		public int getWeight() {
+			return weight;
+		}
+
+		public void setWeight(int weight) {
+			this.weight = weight;
+		}
 	}
 	
 	public static Tree createTreeMap(AbstractProduct product, User user, IRecommender recommender) {
@@ -73,7 +85,7 @@ public class TreeMapGenerator {
 		
 		// create tree structure (using hash maps) from the flat collection
 
-		Map<String, Map<String, List<Product>>> firstLevel = new HashMap<String, Map<String, List<Product>>>();
+		Map<String, Map<String, Map<Product, Integer>>> firstLevel = new HashMap<String, Map<String, Map<Product, Integer>>>();
 		
 		Iterator<ProductRecommendation> recommendationsIt = recommendations.iterator();
 		//System.out.println("system found [" + recommendations.size() + "] recommendations");
@@ -83,18 +95,18 @@ public class TreeMapGenerator {
 			ProductRecommendation nextRecommendation = recommendationsIt.next();
 			//Product nextProduct = nextRecommendation.getProduct();
 			//int weight = nextRecommendation.getWeight();
-			Map<String, List<Product>> secondLevel = firstLevel.get(nextRecommendation.getProduct().getFirstLevelClassifier());
+			Map<String, Map<Product, Integer>> secondLevel = firstLevel.get(nextRecommendation.getProduct().getFirstLevelClassifier());
 			if (secondLevel == null) {
-				secondLevel = new HashMap<String, List<Product>>();
+				secondLevel = new HashMap<String, Map<Product, Integer>>();
 				firstLevel.put(nextRecommendation.getProduct().getFirstLevelClassifier(), secondLevel);
 			}
 			//System.out.println("Num authors for category [" + nextRecommendation.getProduct().getFirstLevelClassifier() + "] is [" + secondLevel.size() + "]");
-			List<Product> products = secondLevel.get(nextRecommendation.getProduct().getSecondLevelClassifier());
+			Map<Product, Integer> products = secondLevel.get(nextRecommendation.getProduct().getSecondLevelClassifier());
 			if (products == null) {
-				products = new ArrayList<Product>();
+				products = new HashMap<Product, Integer>();
 				secondLevel.put(nextRecommendation.getProduct().getSecondLevelClassifier(), products);
 			}
-			products.add(nextRecommendation.getProduct());
+			products.put(nextRecommendation.getProduct(), nextRecommendation.getWeight());
 			//System.out.println("Rec number [" + i + "] : Num products for [" + nextRecommendation.getProduct().getSecondLevelClassifier() + "] is [" + products.size() + "]");
 		}
 		
@@ -105,7 +117,7 @@ public class TreeMapGenerator {
 		Iterator<String> firstLevelIterator = firstLevel.keySet().iterator();
 		while (firstLevelIterator.hasNext()) {
 			String firstLevelName = firstLevelIterator.next();
-			Map<String, List<Product>> secondLevel = firstLevel.get(firstLevelName);
+			Map<String, Map<Product, Integer>> secondLevel = firstLevel.get(firstLevelName);
 			Node firstLevelNode = new Node(firstLevelName);
 			rootNode.addChild(firstLevelNode);
 			
@@ -114,21 +126,19 @@ public class TreeMapGenerator {
 				String secondLevelName = secondLevelIterator.next();
 				Node secondLevelNode = new Node(secondLevelName);
 				firstLevelNode.addChild(secondLevelNode);
-				Iterator<Product> productsIt = firstLevel.get(firstLevelName).get(secondLevelName).iterator();
+				Iterator<Product> productsIt = firstLevel.get(firstLevelName).get(secondLevelName).keySet().iterator();
 				while (productsIt.hasNext()) {
 					Product aProduct = productsIt.next();
 					Node productNode = new Node(aProduct.getName());
+					productNode.setWeight(firstLevel.get(firstLevelName).get(secondLevelName).get(aProduct));
 					secondLevelNode.addChild(productNode);
 				}
 			}
 		}
 		
-		// Because Prefuse is stupid, we must now write the tree to an XML file in a particular format....
-		// and then, obviously, we have Prefuse parse that XML file into a Table!! Yeah, useless file I/O!!
 		Tree t = null;
         try {
-			File tempFile = new File("tmp.xml");
-            t = (Tree)new TreeMLReader().readGraph(new FileInputStream(outputTreeToFile(rootNode, tempFile)));
+            t = (Tree)new TreeMLReader().readGraph(createInputStreamFromXML(rootNode));
         } catch ( Exception e ) {
             e.printStackTrace();
             System.exit(1);
@@ -137,7 +147,7 @@ public class TreeMapGenerator {
 		return t;
 	}
 	
-	private static File outputTreeToFile(Node rootNode, File tempFile) {
+	private static InputStream createInputStreamFromXML(Node rootNode) {
 		
 		try {
 	        //We need a Document
@@ -161,33 +171,34 @@ public class TreeMapGenerator {
 	        declarations.appendChild(attributeDecl);
 	        
 	        // create root branch
-	        Element rootBranch = createElement(doc, "branch", "name", "value", "First Level Classifier");
+	        Element rootBranch = createElementWithAttribute(doc, "branch", "name", "First Level Classifier");
 	        root.appendChild(rootBranch);
 	        
 	        // transform tree into XML
 	        Iterator<Node> firstLevelIt = rootNode.getChildren().iterator();
 	        while (firstLevelIt.hasNext()) {
 	        	Node firstLevelNode = firstLevelIt.next();
-	        	Element firstLevelBranch = createElement(doc, "branch", "name", "value", firstLevelNode.getValue());
+	        	Element firstLevelBranch = createElementWithAttribute(doc, "branch", "name", firstLevelNode.getValue());
 	        	rootBranch.appendChild(firstLevelBranch);
 	        	
 	        	Iterator<Node> secondLevelIt = firstLevelNode.getChildren().iterator();
 	        	while (secondLevelIt.hasNext()) {
 	        		Node secondLevelNode = secondLevelIt.next();
-	        		Element secondLevelBranch = createElement(doc, "branch", "name", "value", secondLevelNode.getValue());
+	        		Element secondLevelBranch = createElementWithAttribute(doc, "branch", "name", secondLevelNode.getValue());
 	        		firstLevelBranch.appendChild(secondLevelBranch);
 	        		
 	        		Iterator<Node> thirdLevelIt = secondLevelNode.getChildren().iterator();
 	        		while (thirdLevelIt.hasNext()) {
 	        			Node thirdLevelNode = thirdLevelIt.next();
-	        			Element leafNode = createElement(doc, "leaf", "name", "value", thirdLevelNode.getValue());
+	        			Element leafNode = createElementWithAttribute(doc, "leaf", "name", 
+	        					getWeightAsString(thirdLevelNode.getWeight()) + ":" + thirdLevelNode.getValue());
 	        			secondLevelBranch.appendChild(leafNode);
 	        		}
 	        	}
 	        	
 	        }
 	        
-	        return writeXmlToFile(doc, tempFile);
+	        return writeXmlToInputStream(doc);
 	        
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -195,7 +206,15 @@ public class TreeMapGenerator {
 		}
 	}
 	
-	private static File writeXmlToFile(Document doc, File tempFile) {
+	private static String getWeightAsString(int weight) {
+		String result = "1";
+		if (weight > 0) {
+			result = "" + weight;
+		}
+		return result;
+	}
+	
+	private static InputStream writeXmlToInputStream(Document doc) {
 		
 		try {
 			/////////////////
@@ -214,27 +233,26 @@ public class TreeMapGenerator {
             trans.transform(source, result);
             String xmlString = sw.toString();
             
-            // write to file
-            FileWriter fw = new FileWriter(tempFile);
-            BufferedWriter fbw = new BufferedWriter(fw);
-            fbw.write(xmlString);
-            fbw.close();
+            System.out.println(xmlString);
             
-			return new File("tmp2.xml");
+			return new ByteArrayInputStream(xmlString.getBytes("UTF-8"));
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
 	
-	private static Element createElement(Document doc, String name, String nodeName, String attrName, String attrValue) {
-		Element newElement = doc.createElement(name);
-		
+	private static Element createAttribute(Document doc, String attrName, String attrValue) {
 		Element attribute = doc.createElement("attribute");
-		attribute.setAttribute("name", nodeName);
-		attribute.setAttribute(attrName, attrValue);
-		newElement.appendChild(attribute);
-		
+		attribute.setAttribute("name", attrName);
+		attribute.setAttribute("value", attrValue);
+		return attribute;
+	}
+	
+	private static Element createElementWithAttribute(Document doc, String name, String attrName, String attrValue) {
+		Element newElement = doc.createElement(name);
+		newElement.appendChild(createAttribute(doc, attrName, attrValue));
 		return newElement;
 	}
 }

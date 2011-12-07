@@ -37,6 +37,7 @@ public class GoogleGenreImporter {
 			// how many books already have a genre
 			Statement s = conn.createStatement();
 			ResultSet results = s.executeQuery("SELECT COUNT(*) FROM `BX-Books` WHERE genre IS NOT NULL");
+			results.next();
 			int i = results.getInt(1);
 			
 			// iterate over all books in database, extract Genre info, and update corresponding entry

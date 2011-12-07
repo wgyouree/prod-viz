@@ -14,6 +14,7 @@ public class Product extends PersistentObject {
 	private String firstLevelClassifier;
 	private String secondLevelClassifier;
 	private BookInformation book;
+	private int cummulativeRating = 0;
 	
 	public Product(String ID, String name, String firstLevelClassifier, String secondLevelClassifier) {
 		super(ID);
@@ -47,6 +48,14 @@ public class Product extends PersistentObject {
 		return book;
 	}
 	
+	public int getCummulativeRating() {
+		return cummulativeRating;
+	}
+
+	public void setCummulativeRating(int cummulativeRating) {
+		this.cummulativeRating = cummulativeRating;
+	}
+
 	public void fetchInfoFromAmazon(String isbn){
 		// Set the service:
 		com.ECS.client.jax.AWSECommerceService service = new com.ECS.client.jax.AWSECommerceService();

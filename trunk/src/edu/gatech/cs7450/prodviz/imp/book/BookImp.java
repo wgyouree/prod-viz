@@ -18,7 +18,7 @@ public class BookImp extends AbstractProduct {
 				
 				@Override
 				public String getTableName() {
-					return "`BX-Books`";
+					return "BX_Books";
 				}
 				
 				@Override
@@ -28,7 +28,7 @@ public class BookImp extends AbstractProduct {
 				
 				@Override
 				public String getNameFieldName() {
-					return "`Book-Title`";
+					return "Book_Title";
 				}
 				
 				@Override
@@ -38,24 +38,24 @@ public class BookImp extends AbstractProduct {
 				
 				@Override
 				public String getSecondLevelClassifierFieldName() {
-					return "`Book-Author`";
+					return "Book_Author";
 				}
 			  },
 			  new IReviewTableSchema() {
 					
 				@Override
 				public String getTableName() {
-					return "`BX-Book-Ratings`";
+					return "BX_Book_Ratings";
 				}
 				
 				@Override
 				public String getIdFieldName() {
-					return "`User-ID`,ISBN";
+					return "User_ID,ISBN";
 				}
 				
 				@Override
 				public String getRatingFieldName() {
-					return "`Book-Rating`";
+					return "Book_Rating";
 				}
 				
 				@Override
@@ -65,19 +65,19 @@ public class BookImp extends AbstractProduct {
 				
 				@Override
 				public String getUserIdFieldName() {
-					return "`User-ID`";
+					return "User_ID";
 				}
 			  },
 			  new ITableSchema() {
 					
 				@Override
 				public String getTableName() {
-					return "`BX-Users`";
+					return "BX_Users";
 				}
 				
 				@Override
 				public String getIdFieldName() {
-					return "`User-ID`";
+					return "User_ID";
 				}
 			  });
 
