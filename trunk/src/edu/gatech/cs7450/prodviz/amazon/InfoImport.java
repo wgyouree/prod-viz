@@ -6,6 +6,7 @@ import edu.gatech.cs7450.prodviz.data.DatabaseConfig;
 import edu.gatech.cs7450.prodviz.data.IProductTableSchema;
 import edu.gatech.cs7450.prodviz.data.IReviewTableSchema;
 import edu.gatech.cs7450.prodviz.data.ITableSchema;
+import edu.gatech.cs7450.prodviz.data.IUserTableSchema;
 import edu.gatech.cs7450.prodviz.data.SQLDatabase;
 
 public class InfoImport extends AbstractProduct {
@@ -68,7 +69,7 @@ public class InfoImport extends AbstractProduct {
 					return "`User-ID`";
 				}
 			  },
-			  new ITableSchema() {
+			  new IUserTableSchema() {
 					
 				@Override
 				public String getTableName() {
@@ -78,6 +79,21 @@ public class InfoImport extends AbstractProduct {
 				@Override
 				public String getIdFieldName() {
 					return "`User-ID`";
+				}
+
+				@Override
+				public String getUserIdFieldName() {
+					return "`User-ID`";
+				}
+
+				@Override
+				public String getUserLocationFieldName() {
+					return "Location";
+				}
+
+				@Override
+				public String getUserAgeFieldName() {
+					return "Age";
 				}
 			  });
 
