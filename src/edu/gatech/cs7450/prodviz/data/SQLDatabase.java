@@ -64,7 +64,7 @@ public class SQLDatabase extends Database {
 				
 				ResultSet results = pr.executeQuery();
 				while (results.next()) {
-					User user = new User(results.getInt(1) + "", "none");
+					User user = new User(results.getInt(1) + "", "none", "none", 0);
 					result.add(user);
 				}
 			}
@@ -144,4 +144,35 @@ public class SQLDatabase extends Database {
 		
 		return result;
 	}
+	
+	public List<Review> getRatingsByAgeOfUser(List<Product> products)
+	{
+		String reviewTableName = this.product.getReviewTableSchema().getTableName();
+		String reviewProductIDField = this.product.getReviewTableSchema().getProductIdFieldName();
+		String reviewUserIdField = this.product.getReviewTableSchema().getUserIdFieldName();
+		String reviewRatingField = this.product.getReviewTableSchema().getRatingFieldName();
+		
+		String userTableName = this.product.getUserTableSchema().getTableName();
+		String userUserIdField = this.product.getUserTableSchema().getUserIdFieldName();
+		String userUserAgeField = this.product.getUserTableSchema().getUserAgeFieldName();
+						
+		List<User> users = new ArrayList<User> ();
+		
+		List<Review> result = new ArrayList<Review>();
+		
+		
+		
+		return result;
+	}
+//getRatingsByAgeOfUser	
+	//Select all from ratingTableName Where productIdField =? And not null
+	//Create arraylist of users for that product
+	//Create list of reviews (one for each age) and iterate through users averaging ratings as we go
+	//Iterate through results to average rating for age
+	//Return list of ratings
+	
+//getRatingsByLocationOfUser	
+	//Get userIDs in specific location
+	//Get average the ratings of all of these users
+	//return list of ratings locations and average ratings
 }

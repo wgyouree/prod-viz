@@ -7,10 +7,12 @@ import java.util.Set;
 
 public class User extends PersistentObject {
 
-	public User(String ID, String name) {
+	public User(String ID, String name, String location, int age) {
 		super(ID);
 		Map<String, Object> attributes = new HashMap<String, Object>();
 		attributes.put("name", name);
+		attributes.put("location", location);
+		attributes.put("age", age);
 		attributes.put("reviews", new HashSet<Review>());
 		this.setAttributes(attributes);
 	}
