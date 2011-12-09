@@ -145,31 +145,68 @@ public class SQLDatabase extends Database {
 		return result;
 	}
 	
-	public List<Review> getRatingsByAgeOfUser(List<Product> products)
+	public Review[] getRatingsByAgeOfUser(Product searchProduct)
 	{
 		String reviewTableName = this.product.getReviewTableSchema().getTableName();
-		String reviewProductIDField = this.product.getReviewTableSchema().getProductIdFieldName();
+		String reviewProductIdField = this.product.getReviewTableSchema().getProductIdFieldName();
 		String reviewUserIdField = this.product.getReviewTableSchema().getUserIdFieldName();
 		String reviewRatingField = this.product.getReviewTableSchema().getRatingFieldName();
 		
 		String userTableName = this.product.getUserTableSchema().getTableName();
 		String userUserIdField = this.product.getUserTableSchema().getUserIdFieldName();
 		String userUserAgeField = this.product.getUserTableSchema().getUserAgeFieldName();
-						
-		List<User> users = new ArrayList<User> ();
-		
-		List<Review> result = new ArrayList<Review>();
 		
 		
+		Review[] result = new Review[100];
 		
+		try{
+			Connection conn = getConnection();
+
+			Map<String, Integer> userRatings = new HashMap<String, Integer>();
+			
+			PreparedStatement pr = conn.prepareStatement("SELECT * FROM " + reviewTableName + " WHERE " + reviewProductIdField + "=? LIMIT " + 
+					ApplicationContext.getInstance().getNumberOfRatingsCeiling());
+			pr.setString(1, searchProduct.getID());
+			
+			ResultSet results = pr.executeQuery();
+			
+			while(results.next())
+			{
+				userRatings.put(results.getString(reviewUserIdField), results.getInt(reviewRatingField));
+			}
+			
+			Iterator<String> userIdsIt = userRatings.keySet().iterator();
+			
+			while(userIdsIt.hasNext())
+			{
+				pr = conn.prepareStatement("SELECT * FROM " + userTableName + " WHERE " + 
+						userUserIdField + "=? AND " + userUserAgeField + " IS NOT NULL");
+				
+				String userId = userIdsIt.next();
+				
+				pr.setInt(1, Integer.parseInt(userId));
+				
+				results = pr.executeQuery();
+				while(results.next())
+				{
+					int newRating = (int) ((userRatings.get(userId) + result[results.getInt(userUserAgeField)].getRating())/2);
+					
+					Review newResult = new Review
+												(searchProduct.getID(),
+												 Integer.parseInt(userId),
+												 newRating,
+												 searchProduct);
+					
+					result[results.getInt(userUserAgeField)] = newResult;
+				}
+			}
+
+			conn.close();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return result;
 	}
-//getRatingsByAgeOfUser	
-	//Select all from ratingTableName Where productIdField =? And not null
-	//Create arraylist of users for that product
-	//Create list of reviews (one for each age) and iterate through users averaging ratings as we go
-	//Iterate through results to average rating for age
-	//Return list of ratings
 	
 //getRatingsByLocationOfUser	
 	//Get userIDs in specific location
