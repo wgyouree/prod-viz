@@ -19,7 +19,9 @@ import prefuse.data.io.DataIOException;
 import edu.gatech.cs7450.prodviz.ApplicationContext;
 import edu.gatech.cs7450.prodviz.data.Product;
 import edu.gatech.cs7450.prodviz.gui.AbstractAppPanel;
+import edu.gatech.cs7450.prodviz.gui.BottomPanel;
 import edu.gatech.cs7450.prodviz.gui.ResizeablePanel;
+import edu.gatech.cs7450.prodviz.gui.RightPanel;
 import edu.gatech.cs7450.prodviz.gui.viz.TreeMap;
 import edu.gatech.cs7450.prodviz.gui.viz.TreeMapGenerator;
 
@@ -29,8 +31,6 @@ public class GraphPanel extends AbstractAppPanel {
 //	
 //	private JPanel container;
 //	private JScrollPane scrollPane;
-	
-	private TreeMap treeMap;
 	
 	public GraphPanel() {
 		this.setBackground(Color.RED);
@@ -81,7 +81,9 @@ public class GraphPanel extends AbstractAppPanel {
 //		if (this.treeMap != null) {
 //			this.treeMap.setSize(dimension);
 //		}
-		this.swapPanel(dimension, null);
+		this.swapPanel(new Dimension(
+				(new Double(dimension.getWidth())).intValue() - RightPanel.DEFAULT_WIDTH,
+				(new Double(dimension.getHeight())).intValue() - BottomPanel.DEFAULT_HEIGHT - 70), null);
 		System.out.println("resized to [" + dimension.getWidth() + " " + dimension.getHeight() + "]");
 	}
 	
@@ -92,7 +94,7 @@ public class GraphPanel extends AbstractAppPanel {
 	public void swapPanel(Dimension dimension, String onlyThisFirstLevelClassifier) {
 		this.removeAll();
 		ApplicationContext appContext = ApplicationContext.getInstance();
-		this.treeMap = (TreeMap)TreeMap.renderTreeMap(
+		JComponent treeMap = TreeMap.renderTreeMap(
 				this,
 				dimension,
 				TreeMapGenerator.createTreeMap(

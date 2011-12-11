@@ -238,7 +238,7 @@ public class TreeMap extends Display {
             	String[] peices = name.split(TreeMapGenerator.DELIMETER_REGEXP);
             	
         		if (e.getModifiers() == InputEvent.BUTTON1_MASK) {
-        			ROOT_PANEL.showInfo(ApplicationContext.getInstance().getActiveProduct().getProductById(peices[4]));
+        			ROOT_PANEL.showInfo(ApplicationContext.getInstance().getActiveProduct().getDatabase().getProductById(peices[4]));
         		} else if (e.getModifiers() == InputEvent.BUTTON3_MASK) {
 	            	ROOT_PANEL.swapPanel(null, peices[1]);
         		}
@@ -247,11 +247,11 @@ public class TreeMap extends Display {
         
         Box box = UILib.getBox(new Component[]{title,search,backToTop}, true, 10, 3, 0);
 
-//        JPanel panel = new JPanel(new BorderLayout());
-//        panel.add(treemap, BorderLayout.CENTER);
-//        panel.add(box, BorderLayout.SOUTH);
-//        UILib.setColor(panel, Color.BLACK, Color.GRAY);
-        return treemap;
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.add(treemap, BorderLayout.CENTER);
+        panel.add(box, BorderLayout.SOUTH);
+        UILib.setColor(panel, Color.BLACK, Color.GRAY);
+        return panel;
     }
     
     // ------------------------------------------------------------------------
