@@ -17,7 +17,7 @@ public class MainFrame extends AppFrame {
 
 	private static final long serialVersionUID = 1L;
 	
-	public static int MAXIMUM_SIZE = 10000;
+	//public static int MAXIMUM_SIZE = 10000;
 	
 	private AbstractAppPanel DEFAULT_MAIN_PANEL;
 	private AbstractBottomAppPanel DEFAULT_BOTTOM_PANEL = new BarPanel();

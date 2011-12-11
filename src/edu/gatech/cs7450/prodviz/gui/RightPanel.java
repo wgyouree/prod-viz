@@ -16,9 +16,9 @@ public class RightPanel extends JPanel {
 	}
 	
 	public JPanel configureAsRightPanel(JPanel panel) {
-		panel.setMaximumSize(new Dimension(MainFrame.MAXIMUM_SIZE, MainFrame.MAXIMUM_SIZE));
+		panel.setMaximumSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
 		panel.setMinimumSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
-		panel.setPreferredSize(new Dimension(DEFAULT_WIDTH, MainFrame.MAXIMUM_SIZE));
+		panel.setPreferredSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
 		return panel;
 	}
 }

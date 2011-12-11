@@ -23,7 +23,9 @@ public class AgeRatings {
 		JFreeChart chart = createChart(dataset);
 		
 		chartPanel = new ChartPanel(chart);
-		
+        chartPanel.setPreferredSize(new Dimension(300, 200));
+        chartPanel.setMaximumSize(new Dimension(300, 200));
+        chartPanel.restoreAutoBounds();
 	}
 	
 	private XYDataset createDataset(AgeRatingPair[] reviews)
@@ -57,8 +59,9 @@ public class AgeRatings {
 		plot.setDomainGridlinePaint(Color.white);
         plot.setRangeGridlinePaint(Color.white);
         
-        XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
+        XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer)plot.getRenderer();
         renderer.setSeriesLinesVisible(0, true);
+        renderer.setSeriesShapesVisible(0, false);
         plot.setRenderer(renderer);
         
         // change the auto tick unit selection to integer units only...
