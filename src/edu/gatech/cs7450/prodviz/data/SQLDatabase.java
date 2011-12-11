@@ -159,6 +159,9 @@ public class SQLDatabase extends Database {
 		
 		Review[] result = new Review[100];
 		
+		for(int i=0; i<100;i++) result[i] = new Review("0",0,0, searchProduct);
+		
+		
 		try{
 			Connection conn = getConnection();
 
@@ -189,7 +192,9 @@ public class SQLDatabase extends Database {
 				results = pr.executeQuery();
 				while(results.next())
 				{
-					int newRating = (int) ((userRatings.get(userId) + result[results.getInt(userUserAgeField)].getRating())/2);
+					int newRating=0;
+					if(result[results.getInt(userUserAgeField)] ==  null) newRating = (userRatings.get(userId));
+					newRating = (int) ((userRatings.get(userId) + result[results.getInt(userUserAgeField)].getRating())/2);
 					
 					Review newResult = new Review
 												(searchProduct.getID(),
