@@ -8,8 +8,8 @@ public class RightPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
-	private static int DEFAULT_WIDTH = 200;
-	private static int DEFAULT_HEIGHT = 600;
+	public static int DEFAULT_WIDTH = 200;
+	public static int DEFAULT_HEIGHT = 600;
 	
 	public RightPanel() {
 		this.configureAsRightPanel(this);

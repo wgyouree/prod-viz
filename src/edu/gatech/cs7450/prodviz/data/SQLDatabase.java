@@ -283,4 +283,37 @@ public class SQLDatabase extends Database {
 		}
 		return result;
 	}
+	
+	public Product getProductById(String id) {
+
+		String productTableName = this.product.getProductTableSchema().getTableName();
+		String productIdField = this.product.getProductTableSchema().getIdFieldName();
+		String productNameField = this.product.getProductTableSchema().getNameFieldName();
+		String productFirstLevelClassiferField = this.product.getProductTableSchema().getFirstLevelClassifierFieldName();
+		String productSecondLevelClassifierField = this.product.getProductTableSchema().getSecondLevelClassifierFieldName();
+		
+		try{
+			Connection conn = getConnection();
+
+			PreparedStatement pr = conn.prepareStatement("SELECT * FROM " + productTableName + " WHERE " + productIdField + "=?");
+			pr.setString(1, id);
+			
+			ResultSet results = pr.executeQuery();
+			
+			while (results.next()) {
+				Product product = new Product(
+						results.getString(productIdField),
+						results.getString(productNameField),
+						results.getString(productFirstLevelClassiferField),
+						results.getString(productSecondLevelClassifierField));
+				return product;
+			}
+			
+			conn.close();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
 }

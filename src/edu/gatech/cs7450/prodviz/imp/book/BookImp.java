@@ -6,6 +6,7 @@ import edu.gatech.cs7450.prodviz.data.DatabaseConfig;
 import edu.gatech.cs7450.prodviz.data.IProductTableSchema;
 import edu.gatech.cs7450.prodviz.data.IReviewTableSchema;
 import edu.gatech.cs7450.prodviz.data.ITableSchema;
+import edu.gatech.cs7450.prodviz.data.IUserTableSchema;
 import edu.gatech.cs7450.prodviz.data.SQLDatabase;
 
 public class BookImp extends AbstractProduct {
@@ -68,8 +69,8 @@ public class BookImp extends AbstractProduct {
 					return "User_ID";
 				}
 			  },
-			  new ITableSchema() {
-					
+			  new IUserTableSchema() {
+				
 				@Override
 				public String getTableName() {
 					return "BX_Users";
@@ -79,7 +80,22 @@ public class BookImp extends AbstractProduct {
 				public String getIdFieldName() {
 					return "User_ID";
 				}
-			  });
+				
+				@Override
+				public String getUserLocationFieldName() {
+					return "Location";
+				}
+				
+				@Override
+				public String getUserIdFieldName() {
+					return "User_ID";
+				}
+				
+				@Override
+				public String getUserAgeFieldName() {
+					return "Age";
+				}
+			});
 
 		  this.setDatabase(new SQLDatabase(this, new DatabaseConfig(
 			"com.mysql.jdbc.Driver",
