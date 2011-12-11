@@ -43,6 +43,9 @@ import edu.gatech.cs7450.prodviz.recommend.ProductRecommendation;
 
 public class TreeMapGenerator {
 	
+	public static final String DELIMETER = "_:_";
+	public static final String DELIMETER_REGEXP = "[\\_][\\:][\\_]";
+	
 	public static class Node {
 		
 		private String value;
@@ -79,6 +82,10 @@ public class TreeMapGenerator {
 	}
 	
 	public static Tree createTreeMap(AbstractProduct product, User user, IRecommender recommender) {
+		return createTreeMap(product, user, recommender, null);
+	}
+	
+	public static Tree createTreeMap(AbstractProduct product, User user, IRecommender recommender, String onlyThisFirstLevelClassifier) {
 		
 		Collection<ProductRecommendation> recommendations = 
 			recommender.getRecommendations(product, user, ApplicationContext.getInstance().getRecursiveRecommenderDepth());
@@ -117,6 +124,9 @@ public class TreeMapGenerator {
 		Iterator<String> firstLevelIterator = firstLevel.keySet().iterator();
 		while (firstLevelIterator.hasNext()) {
 			String firstLevelName = firstLevelIterator.next();
+			if (onlyThisFirstLevelClassifier != null && !onlyThisFirstLevelClassifier.equals(firstLevelName)) {
+				continue;
+			}
 			Map<String, Map<Product, Integer>> secondLevel = firstLevel.get(firstLevelName);
 			Node firstLevelNode = new Node(firstLevelName);
 			rootNode.addChild(firstLevelNode);
@@ -129,7 +139,7 @@ public class TreeMapGenerator {
 				Iterator<Product> productsIt = firstLevel.get(firstLevelName).get(secondLevelName).keySet().iterator();
 				while (productsIt.hasNext()) {
 					Product aProduct = productsIt.next();
-					Node productNode = new Node(aProduct.getName());
+					Node productNode = new Node(aProduct.getName() + DELIMETER + aProduct.getID());
 					productNode.setWeight(firstLevel.get(firstLevelName).get(secondLevelName).get(aProduct));
 					secondLevelNode.addChild(productNode);
 				}
@@ -191,7 +201,8 @@ public class TreeMapGenerator {
 	        		while (thirdLevelIt.hasNext()) {
 	        			Node thirdLevelNode = thirdLevelIt.next();
 	        			Element leafNode = createElementWithAttribute(doc, "leaf", "name", 
-	        					getWeightAsString(thirdLevelNode.getWeight()) + ":" + thirdLevelNode.getValue());
+	        					getWeightAsString(thirdLevelNode.getWeight()) + DELIMETER + firstLevelNode.getValue() + DELIMETER +
+	        					secondLevelNode.getValue() + DELIMETER + thirdLevelNode.getValue());
 	        			secondLevelBranch.appendChild(leafNode);
 	        		}
 	        	}

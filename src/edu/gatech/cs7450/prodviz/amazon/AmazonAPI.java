@@ -25,7 +25,7 @@ import org.htmlparser.util.SimpleNodeIterator;
 
 public class AmazonAPI {
 
-	private static AmazonAPI INSTANCE;
+	private static AmazonAPI INSTANCE = new AmazonAPI();
 	
 	// SINGLETON PATTERN
 	private AmazonAPI() {
@@ -33,13 +33,8 @@ public class AmazonAPI {
 	}
 	
 	public static AmazonAPI getInstance() {
-		if (INSTANCE == null) {
-			INSTANCE = new AmazonAPI();
-		}
 		return INSTANCE;
 	}
-	
-	
 	
 	public AmazonReview[] extractReviews(String url) {
 		
@@ -91,22 +86,24 @@ public class AmazonAPI {
 			it = contentNodes.elements();
 			int i = 0;
 			while (it.hasMoreNodes()) {
-				AmazonReview newReview = reviews.get(i++);
-				Node nextNode = it.nextNode();
-				NodeList children = nextNode.getChildren();
-				SimpleNodeIterator cIt = children.elements();
-				List<Node> textNodes = new ArrayList<Node>();
-				while (cIt.hasMoreNodes()) {
-					Node next = cIt.nextNode();
-					if (next instanceof TextNode) {
-						textNodes.add(next);
+				if (reviews.size() < i + 1) {
+					AmazonReview newReview = reviews.get(i++);
+					Node nextNode = it.nextNode();
+					NodeList children = nextNode.getChildren();
+					SimpleNodeIterator cIt = children.elements();
+					List<Node> textNodes = new ArrayList<Node>();
+					while (cIt.hasMoreNodes()) {
+						Node next = cIt.nextNode();
+						if (next instanceof TextNode) {
+							textNodes.add(next);
+						}
 					}
+					for (int j = 0; j < textNodes.size(); j++) {
+						String content = newReview.getContents();
+						newReview.setContents(content + textNodes.get(j).getText());
+					}
+					newReview.setContents(newReview.getContents().trim());
 				}
-				for (int j = 0; j < textNodes.size(); j++) {
-					String content = newReview.getContents();
-					newReview.setContents(content + textNodes.get(j).getText());
-				}
-				newReview.setContents(newReview.getContents().trim());
 			}
 			
 		} catch (Exception e) {

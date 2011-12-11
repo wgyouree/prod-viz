@@ -71,31 +71,31 @@ public class InfoImport extends AbstractProduct {
 			  },
 			  new IUserTableSchema() {
 					
-				@Override
-				public String getTableName() {
-					return "`BX-Users`";
-				}
-				
-				@Override
-				public String getIdFieldName() {
-					return "`User-ID`";
-				}
-
-				@Override
-				public String getUserIdFieldName() {
-					return "`User-ID`";
-				}
-
-				@Override
-				public String getUserLocationFieldName() {
-					return "Location";
-				}
-
-				@Override
-				public String getUserAgeFieldName() {
-					return "Age";
-				}
-			  });
+					@Override
+					public String getTableName() {
+						return "BX_Users";
+					}
+					
+					@Override
+					public String getIdFieldName() {
+						return "User_ID";
+					}
+					
+					@Override
+					public String getUserLocationFieldName() {
+						return "Location";
+					}
+					
+					@Override
+					public String getUserIdFieldName() {
+						return "User_ID";
+					}
+					
+					@Override
+					public String getUserAgeFieldName() {
+						return "Age";
+					}
+				});
 
 		  this.setDatabase(new SQLDatabase(this, new DatabaseConfig(
 			"com.mysql.jdbc.Driver",

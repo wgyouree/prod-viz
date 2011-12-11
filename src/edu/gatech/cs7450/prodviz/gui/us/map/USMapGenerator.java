@@ -7,11 +7,15 @@ import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+
 import org.jdesktop.swingx.JXMapKit;
 import org.jdesktop.swingx.JXMapViewer;
 import org.jdesktop.swingx.mapviewer.GeoPosition;
 import org.jdesktop.swingx.painter.Painter;
 
+import edu.gatech.cs7450.prodviz.data.LocationRatingPair;
 import edu.gatech.cs7450.prodviz.data.Review;
 
 public class USMapGenerator {
@@ -25,11 +29,7 @@ public class USMapGenerator {
 		"pennsylvania", "rhode island", "south carolina", "south dakota", "tennessee", "texas", 
 		"utah", "vermont", "virginia", "washington", "west virginia", "wisconsin", "wyoming"};
 
-	
-	private Review[] ratings;
-
-	public USMapGenerator(final Review[] ratings){
-		this.ratings = ratings;
+	public static JComponent createMap(final LocationRatingPair[] ratings) {
 		USMapGenerator.createStates();
 		
 		Painter<JXMapViewer> polygonOverlay = new Painter<JXMapViewer>(){
@@ -53,7 +53,7 @@ public class USMapGenerator {
 						if(state.getStateName().equalsIgnoreCase(stateNames[i])) break;
 					}
 					
-					Color fillColor = new Color(0,((255)/10)*ratings[i].getRating(),0);
+					Color fillColor = new Color(0,((255)/10)*(new Double(ratings[i].getRating())).intValue(),0);
 					g.setColor(fillColor);
 					g.fill(poly);
 					g.setColor(fillColor);
@@ -67,9 +67,12 @@ public class USMapGenerator {
 		JXMapKit usMap = new JXMapKit();
 		
 		usMap.getMiniMap().setOverlayPainter(polygonOverlay);
+		
+		// TODO: populate panel with map
+		return new JPanel();
 	}
 	
-	public static ArrayList<USState> createStates()
+	private static ArrayList<USState> createStates()
 	{
 		//Read in KML file 
 		

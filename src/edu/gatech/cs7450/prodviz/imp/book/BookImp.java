@@ -70,7 +70,7 @@ public class BookImp extends AbstractProduct {
 				}
 			  },
 			  new IUserTableSchema() {
-					
+				
 				@Override
 				public String getTableName() {
 					return "BX_Users";
@@ -80,22 +80,22 @@ public class BookImp extends AbstractProduct {
 				public String getIdFieldName() {
 					return "User_ID";
 				}
-
-				@Override
-				public String getUserIdFieldName() {
-					return "User_ID";
-				}
-
+				
 				@Override
 				public String getUserLocationFieldName() {
 					return "Location";
 				}
-
+				
+				@Override
+				public String getUserIdFieldName() {
+					return "User_ID";
+				}
+				
 				@Override
 				public String getUserAgeFieldName() {
 					return "Age";
 				}
-			  });
+			});
 
 		  this.setDatabase(new SQLDatabase(this, new DatabaseConfig(
 			"com.mysql.jdbc.Driver",

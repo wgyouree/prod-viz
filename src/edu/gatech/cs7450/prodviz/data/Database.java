@@ -40,6 +40,10 @@ public abstract class Database {
 
 	public abstract Collection<Product> getProductsRecommendedByUsers(Collection<User> otherUsers);
 	
-	public abstract Review[] getRatingsByAgeOfUser(Product product);
+	public abstract AgeRatingPair[] getRatingsByAgeOfUser(Product product);
+	
+	public abstract LocationRatingPair[] getRatingsByLocationOfUser(Product searchProduct);
+	
+	public abstract Product getProductById(String id);
 
 }

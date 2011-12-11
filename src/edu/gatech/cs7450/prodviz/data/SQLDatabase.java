@@ -7,9 +7,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import java.sql.PreparedStatement;
 
@@ -145,7 +147,7 @@ public class SQLDatabase extends Database {
 		return result;
 	}
 	
-	public Review[] getRatingsByAgeOfUser(Product searchProduct)
+	public AgeRatingPair[] getRatingsByAgeOfUser(Product searchProduct)
 	{
 		String reviewTableName = this.product.getReviewTableSchema().getTableName();
 		String reviewProductIdField = this.product.getReviewTableSchema().getProductIdFieldName();
@@ -155,60 +157,39 @@ public class SQLDatabase extends Database {
 		String userTableName = this.product.getUserTableSchema().getTableName();
 		String userUserIdField = this.product.getUserTableSchema().getUserIdFieldName();
 		String userUserAgeField = this.product.getUserTableSchema().getUserAgeFieldName();
-		
-		
-		Review[] result = new Review[100];
+
+		List<AgeRatingPair> result = new ArrayList<AgeRatingPair>();
 		
 		try{
 			Connection conn = getConnection();
 
-			Map<String, Integer> userRatings = new HashMap<String, Integer>();
-			
-			PreparedStatement pr = conn.prepareStatement("SELECT * FROM " + reviewTableName + " WHERE " + reviewProductIdField + "=? LIMIT " + 
-					ApplicationContext.getInstance().getNumberOfRatingsCeiling());
+			PreparedStatement pr = conn.prepareStatement(
+					"SELECT " + userTableName + "." + userUserAgeField + "," +
+					"AVG(" + reviewTableName + "." + reviewRatingField + ") FROM " +
+					userTableName + "," + reviewTableName + " WHERE " +
+					userTableName + "." + userUserIdField + "=" +
+					reviewTableName + "." + reviewUserIdField + " AND " +
+					userTableName + "." + userUserAgeField + "<=" +
+					ApplicationContext.getInstance().getMaximumAge() + " AND " +
+					reviewTableName + "." + reviewProductIdField + "=?" +
+					" GROUP BY " + userTableName + "." + userUserAgeField);
 			pr.setString(1, searchProduct.getID());
 			
 			ResultSet results = pr.executeQuery();
 			
-			while(results.next())
-			{
-				userRatings.put(results.getString(reviewUserIdField), results.getInt(reviewRatingField));
-			}
-			
-			Iterator<String> userIdsIt = userRatings.keySet().iterator();
-			
-			while(userIdsIt.hasNext())
-			{
-				pr = conn.prepareStatement("SELECT * FROM " + userTableName + " WHERE " + 
-						userUserIdField + "=? AND " + userUserAgeField + " IS NOT NULL");
-				
-				String userId = userIdsIt.next();
-				
-				pr.setInt(1, Integer.parseInt(userId));
-				
-				results = pr.executeQuery();
-				while(results.next())
-				{
-					int newRating = (int) ((userRatings.get(userId) + result[results.getInt(userUserAgeField)].getRating())/2);
-					
-					Review newResult = new Review
-												(searchProduct.getID(),
-												 Integer.parseInt(userId),
-												 newRating,
-												 searchProduct);
-					
-					result[results.getInt(userUserAgeField)] = newResult;
-				}
+			while(results.next()) {
+				result.add(new AgeRatingPair(results.getInt(1), results.getDouble(2)));
 			}
 
 			conn.close();
 		}catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return result;
+		
+		return result.toArray(new AgeRatingPair[result.size()]);
 	}	
 	
-	public Review[] getRatingsByLocationOfUser(Product searchProduct)
+	public LocationRatingPair[] getRatingsByLocationOfUser(Product searchProduct)
 	{
 		String reviewTableName = this.product.getReviewTableSchema().getTableName();
 		String reviewProductIdField = this.product.getReviewTableSchema().getProductIdFieldName();
@@ -228,59 +209,95 @@ public class SQLDatabase extends Database {
 				"utah", "vermont", "virginia", "washington", "west virginia", "wisconsin", "wyoming"};
 		
 	
-		Review[] result = new Review[50];
+		Set<String> stateSet = new HashSet<String>();
+		for (int i = 0; i < states.length; i++) {
+			stateSet.add(states[i]);
+		}
+		
+		List<LocationRatingPair> result = new ArrayList<LocationRatingPair>();
 		
 		try{
 			Connection conn = getConnection();
 
-			Map<String, Integer> userRatings = new HashMap<String, Integer>();
-			
-			PreparedStatement pr = conn.prepareStatement("SELECT * FROM " + reviewTableName + " WHERE " + reviewProductIdField + "=? LIMIT " + 
-					ApplicationContext.getInstance().getNumberOfRatingsCeiling());
+			PreparedStatement pr = conn.prepareStatement(
+					"SELECT " + userTableName + "." + userUserLocationField + "," +
+					"AVG(" + reviewTableName + "." + reviewRatingField + ") FROM " +
+					userTableName + "," + reviewTableName + " WHERE " +
+					userTableName + "." + userUserIdField + "=" +
+					reviewTableName + "." + reviewUserIdField + " AND " +
+					userTableName + "." + userUserLocationField + " LIKE '%usa' AND " +
+					reviewTableName + "." + reviewProductIdField + "=?" +
+					" GROUP BY " + userTableName + "." + userUserLocationField);
 			pr.setString(1, searchProduct.getID());
 			
 			ResultSet results = pr.executeQuery();
+			Map<String, List<Double>> ratingsByLocation = new HashMap<String, List<Double>>();
 			
-			while(results.next())
-			{
-				userRatings.put(results.getString(reviewUserIdField), results.getInt(reviewRatingField));
+			while(results.next()) {
+				String location = results.getString(1);
+				String[] locationSplit = location.split("[,]");
+				if (locationSplit.length == 3) {
+					String state = locationSplit[1].trim();
+					if (stateSet.contains(state)) {
+						List<Double> ratings = ratingsByLocation.get(state);
+						if (ratings == null) {
+							ratings = new ArrayList<Double>();
+							ratingsByLocation.put(state, ratings);
+						}
+						ratings.add(results.getDouble(2));
+					}
+				}
 			}
 			
-			Iterator<String> userIdsIt = userRatings.keySet().iterator();
-			
-			while(userIdsIt.hasNext())
-			{
-				pr = conn.prepareStatement("SELECT * FROM " + userTableName + " WHERE " + 
-						userUserIdField + "=? AND " + userUserLocationField + " IS NOT NULL");
-				
-				String userId = userIdsIt.next();
-				
-				pr.setInt(1, Integer.parseInt(userId));
-				results = pr.executeQuery();
-				while(results.next())
-				{
-					int i=0;
-					for(i=0;i<50; i++)
-					{
-						if(results.getString(userUserLocationField).contains(states[i])) break;
-					}
-					
-					int newRating = (int) ((userRatings.get(userId) + result[i].getRating())/2);
-					
-					Review newResult = new Review
-												(searchProduct.getID(),
-												 Integer.parseInt(userId),
-												 newRating,
-												 searchProduct);
-					
-					result[i] = newResult;
+			Iterator<String> stateIt = ratingsByLocation.keySet().iterator();
+			while (stateIt.hasNext()) {
+				String state = stateIt.next();
+				List<Double> stateRatings = ratingsByLocation.get(state);
+				double sum = 0;
+				for (int i = 0; i < stateRatings.size(); i++) {
+					sum += stateRatings.get(i);
 				}
+				double avg = sum / stateRatings.size();
+				result.add(new LocationRatingPair(state, avg));
 			}
 
 			conn.close();
 		}catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return result;
+		return result.toArray(new LocationRatingPair[result.size()]);
+	}
+	
+	public Product getProductById(String id) {
+
+		String productTableName = this.product.getProductTableSchema().getTableName();
+		String productIdField = this.product.getProductTableSchema().getIdFieldName();
+		String productNameField = this.product.getProductTableSchema().getNameFieldName();
+		String productFirstLevelClassiferField = this.product.getProductTableSchema().getFirstLevelClassifierFieldName();
+		String productSecondLevelClassifierField = this.product.getProductTableSchema().getSecondLevelClassifierFieldName();
+		
+		try{
+			Connection conn = getConnection();
+
+			PreparedStatement pr = conn.prepareStatement("SELECT * FROM " + productTableName + " WHERE " + productIdField + "=?");
+			pr.setString(1, id);
+			
+			ResultSet results = pr.executeQuery();
+			
+			while (results.next()) {
+				Product product = new Product(
+						results.getString(productIdField),
+						results.getString(productNameField),
+						results.getString(productFirstLevelClassiferField),
+						results.getString(productSecondLevelClassifierField));
+				return product;
+			}
+			
+			conn.close();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
 	}
 }
