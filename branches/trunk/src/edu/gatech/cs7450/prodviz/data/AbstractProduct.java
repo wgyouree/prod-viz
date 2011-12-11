@@ -9,11 +9,11 @@ public abstract class AbstractProduct {
 	private Classifier secondLevelClassifier;
 	private IProductTableSchema productTableSchema;
 	private IReviewTableSchema reviewTableSchema;
-	private ITableSchema userTableSchema;
+	private IUserTableSchema userTableSchema;
 	
 	protected AbstractProduct(
 			String name, Classifier firstLevelClassifier, Classifier secondLevelClassifier,
-			IProductTableSchema productTableSchema, IReviewTableSchema reviewTableSchema, ITableSchema userTableSchema) {
+			IProductTableSchema productTableSchema, IReviewTableSchema reviewTableSchema, IUserTableSchema userTableSchema) {
 		this.name = name;
 		this.firstLevelClassifier = firstLevelClassifier;
 		this.secondLevelClassifier = secondLevelClassifier;
@@ -24,10 +24,6 @@ public abstract class AbstractProduct {
 	
 	public Database getDatabase() {
 		return database;
-	}
-	
-	public Product getProductById(String id) {
-		return this.getDatabase().getProductById(id);
 	}
 	
 	public Classifier getFirstLevelClassifier() {
@@ -46,7 +42,7 @@ public abstract class AbstractProduct {
 		return reviewTableSchema;
 	}
 
-	public ITableSchema getUserTableSchema() {
+	public IUserTableSchema getUserTableSchema() {
 		return userTableSchema;
 	}
 
