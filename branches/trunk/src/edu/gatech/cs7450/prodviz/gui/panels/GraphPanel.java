@@ -20,6 +20,7 @@ import edu.gatech.cs7450.prodviz.ApplicationContext;
 import edu.gatech.cs7450.prodviz.data.Product;
 import edu.gatech.cs7450.prodviz.gui.AbstractAppPanel;
 import edu.gatech.cs7450.prodviz.gui.BottomPanel;
+import edu.gatech.cs7450.prodviz.gui.MainFrame;
 import edu.gatech.cs7450.prodviz.gui.ResizeablePanel;
 import edu.gatech.cs7450.prodviz.gui.RightPanel;
 import edu.gatech.cs7450.prodviz.gui.viz.TreeMap;
@@ -32,7 +33,10 @@ public class GraphPanel extends AbstractAppPanel {
 //	private JPanel container;
 //	private JScrollPane scrollPane;
 	
-	public GraphPanel() {
+	private MainFrame parent;
+	
+	public GraphPanel(MainFrame parent) {
+		this.parent = parent;
 		this.setBackground(Color.RED);
 		this.setLayout(new BorderLayout());
 //		this.container = new JPanel();
@@ -123,5 +127,9 @@ public class GraphPanel extends AbstractAppPanel {
                 BorderFactory.createLineBorder(Color.black));
 		this.add(scrollPane, BorderLayout.CENTER);
 		this.validate();
+	}
+	
+	public void productSelected(Product product) {
+		this.parent.updateAgePlot(product);
 	}
 }

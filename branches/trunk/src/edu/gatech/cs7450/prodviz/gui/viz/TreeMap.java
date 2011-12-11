@@ -24,6 +24,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import edu.gatech.cs7450.prodviz.ApplicationContext;
+import edu.gatech.cs7450.prodviz.data.Product;
 import edu.gatech.cs7450.prodviz.gui.panels.GraphPanel;
 
 import prefuse.Display;
@@ -239,6 +240,7 @@ public class TreeMap extends Display {
             	
         		if (e.getModifiers() == InputEvent.BUTTON1_MASK) {
         			ROOT_PANEL.showInfo(ApplicationContext.getInstance().getActiveProduct().getDatabase().getProductById(peices[4]));
+        			ROOT_PANEL.productSelected(new Product(peices[4], peices[3], peices[1], peices[2]));
         		} else if (e.getModifiers() == InputEvent.BUTTON3_MASK) {
 	            	ROOT_PANEL.swapPanel(null, peices[1]);
         		}
