@@ -1,6 +1,7 @@
 package edu.gatech.cs7450.prodviz.gui.panels;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
@@ -33,5 +34,9 @@ public class ControlsPanel extends AbstractAppPanel {
 		productBoxConstraints.weightx = 0.5;
 		productBoxConstraints.weighty = 0.5;
 		this.add(productBox, productBoxConstraints);
+	}
+	
+	public void resize(Dimension dimension) {
+		
 	}
 }

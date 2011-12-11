@@ -2,6 +2,8 @@ package edu.gatech.cs7450.prodviz.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -45,6 +47,37 @@ public class MainFrame extends AppFrame {
 		this.setTitle(title);
 		this.setPreferredSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		this.addComponentListener(new ComponentListener() {
+			
+			@Override
+			public void componentShown(ComponentEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void componentResized(ComponentEvent e) {
+				System.out.println("RESIZED");
+				resizeAll();
+			}
+			
+			@Override
+			public void componentMoved(ComponentEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void componentHidden(ComponentEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+	}
+	
+	private void resizeAll() {
+		this.mainPanel.resize(new Dimension(this.getWidth(), this.getHeight()));
 	}
 	
 	public void initializeGUI() {
@@ -81,7 +114,7 @@ public class MainFrame extends AppFrame {
 	
 	public void setMainPanel(AppPanel panel) {
 		this.mainPanel.removeAll();
-		this.mainPanel.add(panel.getPanel());
+		this.mainPanel.addAppPanel(panel.getPanel());
 		this.invalidate();
 	}
 	

@@ -7,16 +7,24 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.awt.Insets;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.util.Iterator;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+
+import edu.gatech.cs7450.prodviz.ApplicationContext;
+import edu.gatech.cs7450.prodviz.gui.panels.GraphPanel;
 
 import prefuse.Display;
 import prefuse.Visualization;
@@ -87,7 +95,7 @@ public class TreeMap extends Display {
 	 * @param t
 	 * @param label
 	 */
-	private TreeMap(Tree t, String label) {
+	private TreeMap(Tree t, String label, Dimension dimension) {
 		super(new Visualization());
 		
 		// add the tree to the visualization
@@ -135,7 +143,12 @@ public class TreeMap extends Display {
         m_vis.putAction("layout", layout);
         
         // initialize our display
-        setSize(700,600);
+        if (dimension == null) {
+        	setSize(700,600);
+        } else {
+        	setSize(dimension);
+        }
+        //setPreferredSize(new Dimension(700, 600));
         setItemSorter(new TreeDepthItemSorter());
         addControlListener(new ControlAdapter() {
             public void itemEntered(VisualItem item, MouseEvent e) {
@@ -175,9 +188,11 @@ public class TreeMap extends Display {
      * 
      * @return a JComponent with the rendered tree inside, including a search panel
      */
-    public static JComponent renderTreeMap(Tree t, final String label) {
+    public static JComponent renderTreeMap(GraphPanel rootPanel, Dimension dimension, Tree t, final String label, boolean isTop) {
     	
-    	final TreeMap treemap = new TreeMap(t, label);
+    	final GraphPanel ROOT_PANEL = rootPanel;
+    	
+    	final TreeMap treemap = new TreeMap(t, label, dimension);
     	
     	// create a search panel for the tree map
         JSearchPanel search = treemap.getSearchQuery().createSearchPanel();
@@ -191,32 +206,52 @@ public class TreeMap extends Display {
         title.setBorder(BorderFactory.createEmptyBorder(3,0,0,0));
         title.setFont(FontLib.getFont("Tahoma", Font.PLAIN, 16));
         
+        final JButton backToTop = new JButton("Back to Top");
+        backToTop.setVerticalAlignment(SwingConstants.BOTTOM);
+        backToTop.setFont(FontLib.getFont("Tahoma", Font.PLAIN, 16));
+        //backToTop.setMargin(new Insets(5, 5, 5, 5));
+        backToTop.setEnabled(!isTop);
+        
+        backToTop.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ROOT_PANEL.swapPanel(null, null);
+			}
+		});
+        
         treemap.addControlListener(new ControlAdapter() {
             public void itemEntered(VisualItem item, MouseEvent e) {
             	String name = item.getString("name");
-            	String[] peices = name.split("[\\:]");
-                title.setText(peices[1]);
+            	String[] peices = name.split(TreeMapGenerator.DELIMETER_REGEXP);
+                title.setText(peices[3] + " - " + peices[2]);
             }
             public void itemExited(VisualItem item, MouseEvent e) {
                 title.setText(null);
             }
         });
         
-        //treemap.addControlListener(new ZoomToFitControl("tree.nodes"));
-        
         treemap.addControlListener(new ZoomToFitControl() {
         	public void itemClicked(VisualItem item, MouseEvent e) {
-        		System.out.println(item.getGroup());
+
+            	String name = item.getString("name");
+            	String[] peices = name.split(TreeMapGenerator.DELIMETER_REGEXP);
+            	
+        		if (e.getModifiers() == InputEvent.BUTTON1_MASK) {
+        			ROOT_PANEL.showInfo(ApplicationContext.getInstance().getActiveProduct().getProductById(peices[4]));
+        		} else if (e.getModifiers() == InputEvent.BUTTON3_MASK) {
+	            	ROOT_PANEL.swapPanel(null, peices[1]);
+        		}
         	}
         });
         
-        Box box = UILib.getBox(new Component[]{title,search}, true, 10, 3, 0);
+        Box box = UILib.getBox(new Component[]{title,search,backToTop}, true, 10, 3, 0);
 
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.add(treemap, BorderLayout.CENTER);
-        panel.add(box, BorderLayout.SOUTH);
-        UILib.setColor(panel, Color.BLACK, Color.GRAY);
-        return panel;
+//        JPanel panel = new JPanel(new BorderLayout());
+//        panel.add(treemap, BorderLayout.CENTER);
+//        panel.add(box, BorderLayout.SOUTH);
+//        UILib.setColor(panel, Color.BLACK, Color.GRAY);
+        return treemap;
     }
     
     // ------------------------------------------------------------------------
@@ -272,7 +307,7 @@ public class TreeMap extends Display {
                         return ColorLib.rgb(191,99,130);
                     else {
                     	String name = nitem.getString("name");
-                    	String[] peices = name.split("[\\:]");
+                    	String[] peices = name.split(TreeMapGenerator.DELIMETER_REGEXP);
                         return getWeightColor(Integer.parseInt(peices[0]));
                     }
                 }
@@ -290,10 +325,10 @@ public class TreeMap extends Display {
     	
     	if (weight <= 5) {
     		int diff = 5 - weight;
-    		r = (new Long(Math.round(0.1 * diff * 255)).intValue());
+    		r = Math.max(0, (new Long(Math.round(0.1 * diff * 255)).intValue()));
     	} else if (weight > 5) {
     		int diff = 10 - weight;
-    		g = (new Long(Math.round(0.1 * diff * 255)).intValue());
+    		g = Math.min(255, (new Long(Math.round(0.1 * diff * 255)).intValue()));
     	}
     	
     	return ColorLib.rgb(r, g, b);

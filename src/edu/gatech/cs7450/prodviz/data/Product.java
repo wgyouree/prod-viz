@@ -86,50 +86,52 @@ public class Product extends PersistentObject {
 		for (Items itemList : response.getItems()) {
 			for (Item item : itemList.getItem()){
 				
-				book.setTitle (item.getItemAttributes().getTitle());
-				book.setAuthor(item.getItemAttributes().getAuthor().get(0));
-				book.setPrice(item.getItemAttributes().getListPrice().getFormattedPrice());
-				book.setAvailability (item.getOffers().getOffer().get(0).getOfferListing().get(0).getAvailability());
-				book.setLanguage(item.getItemAttributes().getLanguages().getLanguage().get(0).getName());
-				book.setNumPages (item.getItemAttributes().getNumberOfPages());
-				book.setPublisher (item.getItemAttributes().getPublisher());
-				book.setPublishDate( item.getItemAttributes().getPublicationDate());
-				book.setSalesRank (item.getSalesRank());
-				book.setImageUrlL(item.getImageSets().get(0).getImageSet().get(0).getLargeImage().getURL());
-				book.setImageUrlM (item.getImageSets().get(0).getImageSet().get(0).getMediumImage().getURL());
-				book.setImageUrlS(item.getImageSets().get(0).getImageSet().get(0).getSmallImage().getURL());
-				book.setImageUrlSS (item.getImageSets().get(0).getImageSet().get(0).getSwatchImage().getURL());
-				book.setAsin( item.getASIN());
+				//book.setTitle (item.getItemAttributes().getTitle());
+				//book.setAuthor(item.getItemAttributes().getAuthor().get(0));
+				//book.setPrice(item.getItemAttributes().getListPrice().getFormattedPrice());
+				//book.setAvailability (item.getOffers().getOffer().get(0).getOfferListing().get(0).getAvailability());
+				//book.setLanguage(item.getItemAttributes().getLanguages().getLanguage().get(0).getName());
+				//book.setNumPages (item.getItemAttributes().getNumberOfPages());
+				//book.setPublisher (item.getItemAttributes().getPublisher());
+				//book.setPublishDate( item.getItemAttributes().getPublicationDate());
+				//book.setSalesRank (item.getSalesRank());
+				if (item.getImageSets().size() > 0 && item.getImageSets().get(0).getImageSet().size() > 0) {
+					book.setImageUrlL(item.getImageSets().get(0).getImageSet().get(0).getLargeImage().getURL());
+					//book.setImageUrlM (item.getImageSets().get(0).getImageSet().get(0).getMediumImage().getURL());
+					//book.setImageUrlS(item.getImageSets().get(0).getImageSet().get(0).getSmallImage().getURL());
+					//book.setImageUrlSS (item.getImageSets().get(0).getImageSet().get(0).getSwatchImage().getURL());
+				}
+				//book.setAsin( item.getASIN());
 				book.setProductUrl ("http://www.amazon.com/gp/product/" + item.getASIN());
 				book.setCustReviewIframe (item.getCustomerReviews().getIFrameURL());
 				
-				book.setNumEditorialReviews (item.getEditorialReviews().getEditorialReview().size());
+				//book.setNumEditorialReviews (item.getEditorialReviews().getEditorialReview().size());
 				
-				String[] editorialSource =  new String[item.getEditorialReviews().getEditorialReview().size()];
-				String[] editorialContent =  new String[item.getEditorialReviews().getEditorialReview().size()];
-				
-				for (int i = 0; i< item.getEditorialReviews().getEditorialReview().size(); i++){
-					editorialSource[i] = item.getEditorialReviews().getEditorialReview().get(i).getSource();
-					editorialContent[i] = item.getEditorialReviews().getEditorialReview().get(i).getContent();
-				}
-				
-				book.setEditorialReviewSource(editorialSource);
-				book.setEditorialReviewContent(editorialContent);
-				
-				AmazonReview[] reviews = AmazonAPI.getInstance().extractReviews(item.getCustomerReviews().getIFrameURL());
-				
-				book.setNumCustReviews(reviews.length);
-				
-				String[] customerSource = new String[reviews.length];
-				String[] customerContent = new String[reviews.length];
-				
-				for (int i = 0; i < reviews.length; i++) {
-					customerSource[i] = reviews[i].getName();
-					customerContent[i] =  reviews[i].getContents();
-				}
-				
-				book.setCustomerReviewContent(customerContent);
-				book.setCustomerReviewSource(customerSource);
+//				String[] editorialSource =  new String[item.getEditorialReviews().getEditorialReview().size()];
+//				String[] editorialContent =  new String[item.getEditorialReviews().getEditorialReview().size()];
+//				
+//				for (int i = 0; i< item.getEditorialReviews().getEditorialReview().size(); i++){
+//					editorialSource[i] = item.getEditorialReviews().getEditorialReview().get(i).getSource();
+//					editorialContent[i] = item.getEditorialReviews().getEditorialReview().get(i).getContent();
+//				}
+//				
+//				book.setEditorialReviewSource(editorialSource);
+//				book.setEditorialReviewContent(editorialContent);
+//				
+//				AmazonReview[] reviews = AmazonAPI.getInstance().extractReviews(item.getCustomerReviews().getIFrameURL());
+//				
+//				book.setNumCustReviews(reviews.length);
+//				
+//				String[] customerSource = new String[reviews.length];
+//				String[] customerContent = new String[reviews.length];
+//				
+//				for (int i = 0; i < reviews.length; i++) {
+//					customerSource[i] = reviews[i].getName();
+//					customerContent[i] =  reviews[i].getContents();
+//				}
+//				
+//				book.setCustomerReviewContent(customerContent);
+//				book.setCustomerReviewSource(customerSource);
 				
 				break; //Only Display the first response
 			}

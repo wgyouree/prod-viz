@@ -33,7 +33,7 @@ public class ApplicationContext {
 		this.listener = new ApplicationListener(this);
 		
 		// defaults
-		this.activeUser = new User("300000", "Your Name Here", "Nowheresville, ID", 69);
+		this.activeUser = new User("300000", "Your Name Here");
 		this.activeUser.addReview(new Review("1", 1, 8, new Product("1570719586", "God-Shaped Hole", "Genre", "Author")));
 		this.activeRecommender = new BFSRecommender();
 		this.activeProduct = new BookImp();
