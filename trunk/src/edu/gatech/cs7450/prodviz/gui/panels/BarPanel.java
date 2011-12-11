@@ -1,6 +1,9 @@
 package edu.gatech.cs7450.prodviz.gui.panels;
 
 import java.awt.Color;
+
+import org.jdesktop.swingx.JXMapKit;
+
 import edu.gatech.cs7450.prodviz.ApplicationContext;
 import edu.gatech.cs7450.prodviz.data.Product;
 import edu.gatech.cs7450.prodviz.gui.AbstractAppPanel;
@@ -19,7 +22,6 @@ public class BarPanel extends AbstractAppPanel {
 		//ApplicationContext appContext = ApplicationContext.getInstance();
 		
 		//AgeRatingsGenerator.createAgePlot(appContext.getActiveProduct(), );
-		
 		
 		
 	}
