@@ -26,6 +26,7 @@ public class ApplicationContext {
 	private static final int POSITIVE_RATING_THRESHHOLD = 5;
 	private static final int RECURSIVE_RECOMMENDER_DEPTH = 1;
 	private static final int NUMBER_OF_RATINGS_CEILING = 1000;
+	private static final int MAXIMUM_AGE = 100;
 	
 	private ApplicationContext(AbstractProduct[] products, AppFrame mainFrame) {
 		this.products = products;
@@ -87,6 +88,10 @@ public class ApplicationContext {
 	
 	public int getNumberOfRatingsCeiling() {
 		return NUMBER_OF_RATINGS_CEILING;
+	}
+	
+	public int getMaximumAge() {
+		return MAXIMUM_AGE;
 	}
 	
 	public void startApplication() {
