@@ -1,9 +1,13 @@
 package edu.gatech.cs7450.prodviz.gui.panels;
 
 import java.awt.Color;
-import java.awt.Dimension;
 
+import org.jdesktop.swingx.JXMapKit;
+
+import edu.gatech.cs7450.prodviz.ApplicationContext;
+import edu.gatech.cs7450.prodviz.data.Product;
 import edu.gatech.cs7450.prodviz.gui.AbstractAppPanel;
+import edu.gatech.cs7450.prodviz.gui.chart.AgeRatingsGenerator;
 
 public class BarPanel extends AbstractAppPanel {
 
@@ -15,9 +19,10 @@ public class BarPanel extends AbstractAppPanel {
 	
 	public void initComponents() {
 		
-	}
-	
-	public void resize(Dimension dimension) {
+		//ApplicationContext appContext = ApplicationContext.getInstance();
+		
+		//AgeRatingsGenerator.createAgePlot(appContext.getActiveProduct(), );
+		
 		
 	}
 }
