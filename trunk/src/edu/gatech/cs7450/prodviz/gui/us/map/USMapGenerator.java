@@ -7,12 +7,10 @@ import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
-import javax.swing.Painter;
-
-
 import org.jdesktop.swingx.JXMapKit;
 import org.jdesktop.swingx.JXMapViewer;
 import org.jdesktop.swingx.mapviewer.GeoPosition;
+import org.jdesktop.swingx.painter.Painter;
 
 import edu.gatech.cs7450.prodviz.data.Review;
 
@@ -68,7 +66,7 @@ public class USMapGenerator {
 		
 		JXMapKit usMap = new JXMapKit();
 		
-		usMap.getMainMap().setOverlayPainter(polygonOverlay);
+		usMap.getMiniMap().setOverlayPainter(polygonOverlay);
 	}
 	
 	public static ArrayList<USState> createStates()
