@@ -1,5 +1,6 @@
 package edu.gatech.cs7450.prodviz.gui.panels;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.LayoutManager;
@@ -26,34 +27,24 @@ import edu.gatech.cs7450.prodviz.amazon.AmazonReview;
 import edu.gatech.cs7450.prodviz.data.Product;
 import edu.gatech.cs7450.prodviz.gui.AbstractAppPanel;
 
-public class InfoPanel extends AbstractAppPanel {
+public class InfoPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
 //	private static final int MAX_CUSTOMER_REVIEWS = 5;
 	
 	private GraphPanel parent;
-	private JPanel container;
+	private Product product;
 
-	public InfoPanel(GraphPanel parent) {
-		super();
+	public InfoPanel(GraphPanel parent, Product product) {
+		//super();
 		this.parent = parent;
+		this.product = product;
+		this.initComponents();
 	}
-	
+//	
 	public void initComponents() {
-		this.container = new JPanel();
-		//this.container.setPreferredSize(new Dimension(400,400));
-		this.container.setLayout(new BoxLayout(this.container, BoxLayout.PAGE_AXIS));
-		container.setPreferredSize(new Dimension(700,600));
-		JScrollPane scrollPane = new JScrollPane(this.container);
-		this.add(scrollPane);
-	}
-	
-	public void showProduct(Product product) {
-		
-		if (container == null) {
-			this.initComponents();
-		}
+		this.setLayout(new BorderLayout());
 		
 		if (product != null) {
 			
@@ -64,17 +55,22 @@ public class InfoPanel extends AbstractAppPanel {
 			
 			final Product aProduct = product;
 			
+			JPanel topPanel = new JPanel();
+			topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.PAGE_AXIS));
+			
 			JLabel title = new JLabel(product.getName());
 			title.setFont(FontLib.getFont("Tahoma", Font.PLAIN, 20));
+			JPanel titlePanel = new JPanel();
+			titlePanel.add(title);
 			
-			container.add(title);
+			topPanel.add(titlePanel);
 
 			String imageUrl = aProduct.getBookInformation().getImageUrlL();
 			if (imageUrl != null) {
 				try {
 					BufferedImage image = ImageIO.read(new URL(imageUrl));
 					ImageIcon icon = new ImageIcon(image);
-					container.add(new JLabel(icon));
+					this.add(new JLabel(icon), BorderLayout.CENTER);
 				} catch (Exception e) {
 					e.printStackTrace();
 					System.err.println("Failed to display image from [" + imageUrl + "]");
@@ -111,29 +107,31 @@ public class InfoPanel extends AbstractAppPanel {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					parent.swapPanel(null, null);
+					parent.resizeAll();
 				}
 			});
 	        
 	        JPanel controls = new JPanel();
 	        controls.add(seeAmazonPage);
 	        controls.add(backToTop);
-	        container.add(controls);
+	        topPanel.add(controls);
 	        
+	        this.add(topPanel, BorderLayout.NORTH);
+	        
+//	        JPanel customerReviewPanel = new JPanel();
 //	        for (int i = 0; i < reviews.length && i < MAX_CUSTOMER_REVIEWS; i++) {
 //	        	JLabel customerName = new JLabel(reviews[i].getName());
-//	        	container.add(customerName);
+//	        	customerReviewPanel.add(customerName);
 //	        	JTextArea reviewContent = new JTextArea(reviews[i].getContents());
 //	        	reviewContent.setEditable(false);
-//	        	container.add(reviewContent);
+//	        	customerReviewPanel.add(reviewContent);
 //	        }
+//	        this.add(customerReviewPanel, BorderLayout.CENTER);
 	        
 		} else {
-			container.add(new JLabel("Product not found, possible problem with Product Identifier"));
+			this.add(new JLabel("Product not found, possible problem with Product Identifier"));
 		}
-		this.validate();
-	}
-	
-	public void resize(Dimension dimension) {
 		
+		this.validate();
 	}
 }

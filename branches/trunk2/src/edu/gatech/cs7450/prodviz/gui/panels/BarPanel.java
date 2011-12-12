@@ -47,12 +47,12 @@ public class BarPanel extends AbstractBottomAppPanel {
 	}
 	
 	@Override
-	public void updateMap(Product product) {
+	public void updateMap(LocationRatingPair[] pair) {
 		this.rightPanel.removeAll();
 		
 		//ApplicationContext appContext = ApplicationContext.getInstance();
-		LocationRatingPair[] ratings = appContext.getActiveProduct().getDatabase().getRatingsByLocationOfUser(product);
-		JComponent comp = USMapGenerator.createMap(ratings);
+//		LocationRatingPair[] ratings = appContext.getActiveProduct().getDatabase().getRatingsByLocationOfUser(product);
+		JComponent comp = USMapGenerator.createMap(pair);
 		this.leftPanel.add(comp,BorderLayout.CENTER);
 		this.validate();
 	}
