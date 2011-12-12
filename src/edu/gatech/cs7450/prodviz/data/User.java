@@ -33,4 +33,9 @@ public class User extends PersistentObject {
 		this.getAttributes().remove("reviews");
 		this.getAttributes().put("reviews", reviews);
 	}
+	
+	public void removeAllReviews() {
+		this.getAttributes().remove("reviews");
+		this.getAttributes().put("reviews", new HashSet<Review>());
+	}
 }

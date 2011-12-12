@@ -21,8 +21,8 @@ public class MainFrame extends AppFrame {
 	//public static int MAXIMUM_SIZE = 10000;
 	
 	private AbstractAppPanel DEFAULT_MAIN_PANEL;
-	private AbstractBottomAppPanel DEFAULT_BOTTOM_PANEL = new BarPanel();
-	private AbstractAppPanel DEFAULT_RIGHT_PANEL = new ControlsPanel();
+	private AbstractBottomAppPanel DEFAULT_BOTTOM_PANEL;
+	private AbstractAppPanel DEFAULT_CONTROLS_PANEL;
 	
 	private AbstractBottomAppPanel bottomGraphPanel;
 //	private AbstractBottomAppPanel bottomMapPanel;
@@ -32,11 +32,12 @@ public class MainFrame extends AppFrame {
 	
 	private MainPanel mainPanel;
 	private BottomPanel bottomPanel;
-	private RightPanel rightPanel;
 	
 	public MainFrame(String title) {
 		
+		DEFAULT_BOTTOM_PANEL = new BarPanel();
 		DEFAULT_MAIN_PANEL = new GraphPanel(this);
+		DEFAULT_CONTROLS_PANEL = new ControlsPanel(this);
 		
 		this.setTitle(title);
 		this.setPreferredSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
@@ -83,27 +84,24 @@ public class MainFrame extends AppFrame {
 		
 		this.mainPanel = new MainPanel();
 		this.bottomPanel = new BottomPanel();
-		this.rightPanel = new RightPanel();
 		
 		contentPane.add(this.mainPanel, BorderLayout.CENTER);
 		contentPane.add(this.bottomPanel, BorderLayout.SOUTH);
-		contentPane.add(this.rightPanel, BorderLayout.EAST);
 		
 		this.setContentPane(contentPane);
 		
-		this.constructGUI(DEFAULT_MAIN_PANEL, DEFAULT_BOTTOM_PANEL, DEFAULT_RIGHT_PANEL);
+		this.constructGUI(DEFAULT_MAIN_PANEL, DEFAULT_BOTTOM_PANEL, DEFAULT_CONTROLS_PANEL);
 	}
 	
-	public void constructGUI(AbstractAppPanel main, AbstractBottomAppPanel bottom, AbstractAppPanel right) {
+	public void constructGUI(AbstractAppPanel main, AbstractBottomAppPanel bottom, AbstractAppPanel controls) {
 		main.initComponents();
 		this.mainPanel.configureAsMainPanel(main);
 		bottom.initComponents();
 		this.bottomPanel.configureAsBottomPanel(bottom);
-		right.initComponents();
-		this.rightPanel.configureAsRightPanel(right);
+		controls.initComponents();
+		//this.rightPanel.configureAsRightPanel(right);
 		this.setMainPanel(main);
-		this.setBottomPanel(bottom);
-		this.setRightPanel(right);
+		this.setBottomPanel(bottom, controls);
 	}
 	
 	public void setMainPanel(AbstractAppPanel panel) {
@@ -112,16 +110,11 @@ public class MainFrame extends AppFrame {
 		this.validate();
 	}
 	
-	public void setBottomPanel(AbstractBottomAppPanel panel) {
+	public void setBottomPanel(AbstractBottomAppPanel panel, AbstractAppPanel controls) {
 		this.bottomPanel.removeAll();
 		this.bottomPanel.add(panel, BorderLayout.CENTER);
+		this.bottomPanel.add(controls, BorderLayout.WEST);
 		this.bottomGraphPanel = panel;
-		this.validate();
-	}
-	
-	public void setRightPanel(AbstractAppPanel panel) {
-		this.rightPanel.removeAll();
-		this.rightPanel.add(panel);
 		this.validate();
 	}
 	

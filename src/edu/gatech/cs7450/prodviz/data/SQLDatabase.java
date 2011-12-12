@@ -300,4 +300,39 @@ public class SQLDatabase extends Database {
 		
 		return null;
 	}
+	
+	public Product[] getAllProducts() {
+
+		String productTableName = this.product.getProductTableSchema().getTableName();
+		String productIdField = this.product.getProductTableSchema().getIdFieldName();
+		String productNameField = this.product.getProductTableSchema().getNameFieldName();
+		String productFirstLevelClassiferField = this.product.getProductTableSchema().getFirstLevelClassifierFieldName();
+		String productSecondLevelClassifierField = this.product.getProductTableSchema().getSecondLevelClassifierFieldName();
+		
+		List<Product> result = new ArrayList<Product>();
+		
+
+		try{
+			Connection conn = getConnection();
+
+			PreparedStatement pr = conn.prepareStatement("SELECT * FROM " + productTableName);
+			
+			ResultSet results = pr.executeQuery();
+			
+			while (results.next()) {
+				Product product = new Product(
+						results.getString(productIdField),
+						results.getString(productNameField),
+						results.getString(productFirstLevelClassiferField),
+						results.getString(productSecondLevelClassifierField));
+				result.add(product);
+			}
+			
+			conn.close();
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return result.toArray(new Product[result.size()]);
+	}
 }

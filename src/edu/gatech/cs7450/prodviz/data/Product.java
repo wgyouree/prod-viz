@@ -137,4 +137,8 @@ public class Product extends PersistentObject {
 			}
 		}		
 	}
+	
+	public String toString() {
+		return getName();
+	}
 }

@@ -3,8 +3,6 @@ package edu.gatech.cs7450.prodviz;
 import java.awt.event.ActionListener;
 
 import edu.gatech.cs7450.prodviz.data.AbstractProduct;
-import edu.gatech.cs7450.prodviz.data.Database;
-import edu.gatech.cs7450.prodviz.data.IDatabaseConfig;
 import edu.gatech.cs7450.prodviz.data.Product;
 import edu.gatech.cs7450.prodviz.data.Review;
 import edu.gatech.cs7450.prodviz.data.User;
@@ -22,11 +20,14 @@ public class ApplicationContext {
 	private AbstractProduct activeProduct;
 	private User activeUser;
 	private IRecommender activeRecommender;
+	private String activeReviewName;
 	
 	private static final int POSITIVE_RATING_THRESHHOLD = 5;
 	private static final int RECURSIVE_RECOMMENDER_DEPTH = 1;
 	private static final int NUMBER_OF_RATINGS_CEILING = 1000;
 	private static final int MAXIMUM_AGE = 100;
+	
+	private static ApplicationContext INSTANCE;
 	
 	private ApplicationContext(AbstractProduct[] products, AppFrame mainFrame) {
 		this.products = products;
@@ -35,12 +36,20 @@ public class ApplicationContext {
 		
 		// defaults
 		this.activeUser = new User("300000", "Your Name Here", "atlanta, georgia, usa", 30);
-		this.activeUser.addReview(new Review("1", 1, 8, new Product("1570719586", "God-Shaped Hole", "Genre", "Author")));
+		this.setActiveReview(new Review("1", 1, 8, new Product("1570719586", "God-Shaped Hole", "Genre", "Author")));
 		this.activeRecommender = new BFSRecommender();
 		this.activeProduct = new BookImp();
 	}
 	
-	private static ApplicationContext INSTANCE;
+	public void setActiveReview(Review review) {
+		this.activeReviewName = review.getProduct().getName();
+		this.activeUser.removeAllReviews();
+		this.activeUser.addReview(review);
+	}
+	
+	public String getActiveReviewName() {
+		return this.activeReviewName;
+	}
 	
 	public static void initialize(AbstractProduct[] products, AppFrame mainFrame) {
 		INSTANCE = new ApplicationContext(products, mainFrame);

@@ -45,5 +45,7 @@ public abstract class Database {
 	public abstract LocationRatingPair[] getRatingsByLocationOfUser(Product searchProduct);
 	
 	public abstract Product getProductById(String id);
+	
+	public abstract Product[] getAllProducts();
 
 }
