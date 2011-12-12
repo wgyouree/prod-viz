@@ -16,6 +16,7 @@ import edu.gatech.cs7450.prodviz.gui.AbstractAppPanel;
 import edu.gatech.cs7450.prodviz.gui.AbstractBottomAppPanel;
 import edu.gatech.cs7450.prodviz.gui.chart.AgeRatingsGenerator;
 import edu.gatech.cs7450.prodviz.gui.us.map.USMapGenerator;
+import edu.gatech.cs7450.prodviz.gui.viz.MapGenerator;
 
 public class BarPanel extends AbstractBottomAppPanel {
 
@@ -48,8 +49,9 @@ public class BarPanel extends AbstractBottomAppPanel {
 		
 		//ApplicationContext appContext = ApplicationContext.getInstance();
 //		LocationRatingPair[] ratings = appContext.getActiveProduct().getDatabase().getRatingsByLocationOfUser(product);
-		JComponent comp = USMapGenerator.createMap(pair);
-		this.leftPanel.add(comp,BorderLayout.CENTER);
+//		JComponent comp = USMapGenerator.createMap(pair);
+		JComponent comp = MapGenerator.generateMap(pair);
+		this.rightPanel.add(comp,BorderLayout.CENTER);
 		this.validate();
 	}
 	

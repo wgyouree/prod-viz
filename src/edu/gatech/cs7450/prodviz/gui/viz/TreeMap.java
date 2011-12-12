@@ -312,7 +312,7 @@ public class TreeMap extends Display {
                     else {
                     	String name = nitem.getString("name");
                     	String[] peices = name.split(TreeMapGenerator.DELIMETER_REGEXP);
-                    	System.out.println(name);
+//                    	System.out.println(name);
                         return getWeightColor(Integer.parseInt(peices[0]));
                     }
                 }
