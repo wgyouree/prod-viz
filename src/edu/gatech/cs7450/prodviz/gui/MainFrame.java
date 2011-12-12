@@ -18,14 +18,11 @@ public class MainFrame extends AppFrame {
 
 	private static final long serialVersionUID = 1L;
 	
-	//public static int MAXIMUM_SIZE = 10000;
-	
 	private AbstractAppPanel DEFAULT_MAIN_PANEL;
 	private AbstractBottomAppPanel DEFAULT_BOTTOM_PANEL;
 	private AbstractAppPanel DEFAULT_CONTROLS_PANEL;
 	
 	private AbstractBottomAppPanel bottomGraphPanel;
-//	private AbstractBottomAppPanel bottomMapPanel;
 	
 	private static int DEFAULT_WIDTH = 1000;
 	private static int DEFAULT_HEIGHT = 800;
@@ -53,7 +50,6 @@ public class MainFrame extends AppFrame {
 			
 			@Override
 			public void componentResized(ComponentEvent e) {
-				System.out.println("RESIZED");
 				resizeAll();
 			}
 			
@@ -125,6 +121,10 @@ public class MainFrame extends AppFrame {
 	
 	public void updateUSMap(LocationRatingPair[] pair){
 		this.bottomGraphPanel.updateMap(pair);
+	}
+	
+	public void setBottomPanelVisible(boolean visible) {
+		this.bottomPanel.setVisible(visible);
 	}
 
 }
