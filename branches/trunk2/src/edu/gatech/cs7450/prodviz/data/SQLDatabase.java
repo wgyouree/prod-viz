@@ -315,7 +315,7 @@ public class SQLDatabase extends Database {
 		try{
 			Connection conn = getConnection();
 
-			PreparedStatement pr = conn.prepareStatement("SELECT * FROM " + productTableName);
+			PreparedStatement pr = conn.prepareStatement("SELECT * FROM " + productTableName + " ORDER BY " + productNameField);
 			
 			ResultSet results = pr.executeQuery();
 			

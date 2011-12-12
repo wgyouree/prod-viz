@@ -1,5 +1,6 @@
 package edu.gatech.cs7450.prodviz.gui.panels;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -36,16 +37,17 @@ public class ControlsPanel extends AbstractAppPanel {
 	public void initComponents() {
 		ComboBoxModel productModel = new DefaultComboBoxModel(ApplicationContext.getInstance().getProducts());
 		JComboBox productBox = new JComboBox(productModel);
-		GridBagConstraints productBoxConstraints = new GridBagConstraints();
-		productBoxConstraints.gridx = 0;
-		productBoxConstraints.gridy = 0;
-		productBoxConstraints.gridwidth = 1;
-		productBoxConstraints.gridheight = 1;
-		productBoxConstraints.fill = GridBagConstraints.HORIZONTAL;
-		productBoxConstraints.anchor = GridBagConstraints.PAGE_START;
-		productBoxConstraints.weightx = 0.5;
-		productBoxConstraints.weighty = 0.5;
-		this.add(productBox, productBoxConstraints);
+//		
+//		GridBagConstraints productBoxConstraints = new GridBagConstraints();
+//		productBoxConstraints.gridx = 0;
+//		productBoxConstraints.gridy = 0;
+//		productBoxConstraints.gridwidth = 1;
+//		productBoxConstraints.gridheight = 1;
+//		productBoxConstraints.fill = GridBagConstraints.HORIZONTAL;
+//		productBoxConstraints.anchor = GridBagConstraints.PAGE_START;
+//		productBoxConstraints.weightx = 0.5;
+//		productBoxConstraints.weighty = 0.5;
+//		this.add(productBox, productBoxConstraints);
 
 		final JTextField currentProduct = new JTextField();
 		currentProduct.setText(ApplicationContext.getInstance().getActiveReviewName());
@@ -76,19 +78,24 @@ public class ControlsPanel extends AbstractAppPanel {
 		});
 		buttonPanel.add(changeSelectedProductButton);
 		
-		GridBagConstraints buttonConstraints = new GridBagConstraints();
-		buttonConstraints.gridx = 0;
-		buttonConstraints.gridy = 1;
-		buttonConstraints.gridwidth = 1;
-		buttonConstraints.gridheight = 1;
-		buttonConstraints.fill = GridBagConstraints.HORIZONTAL;
-		buttonConstraints.anchor = GridBagConstraints.PAGE_START;
-		buttonConstraints.weightx = 0.5;
-		buttonConstraints.weighty = 0.5;
-		this.add(currentProduct, buttonConstraints);
+//		GridBagConstraints buttonConstraints = new GridBagConstraints();
+//		buttonConstraints.gridx = 0;
+//		buttonConstraints.gridy = 1;
+//		buttonConstraints.gridwidth = 1;
+//		buttonConstraints.gridheight = 1;
+//		buttonConstraints.fill = GridBagConstraints.HORIZONTAL;
+//		buttonConstraints.anchor = GridBagConstraints.PAGE_START;
+//		buttonConstraints.weightx = 0.5;
+//		buttonConstraints.weighty = 0.5;
+//		this.add(currentProduct, buttonConstraints);
+//		
+//		buttonConstraints.gridy = 2;
+//		this.add(buttonPanel, buttonConstraints);
 		
-		buttonConstraints.gridy = 2;
-		this.add(buttonPanel, buttonConstraints);
+		this.setLayout(new BorderLayout());
+		this.add(productBox, BorderLayout.WEST);
+		this.add(currentProduct, BorderLayout.CENTER);
+		this.add(buttonPanel, BorderLayout.EAST);
 	}
 	
 	public void resize(Dimension dimension) {
