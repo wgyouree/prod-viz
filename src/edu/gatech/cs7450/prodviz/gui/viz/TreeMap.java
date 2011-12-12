@@ -193,6 +193,8 @@ public class TreeMap extends Display {
     	
     	final GraphPanel ROOT_PANEL = rootPanel;
     	
+    	final Dimension currentSize = dimension;
+    	
     	final TreeMap treemap = new TreeMap(t, label, dimension);
     	
     	// create a search panel for the tree map
@@ -217,7 +219,7 @@ public class TreeMap extends Display {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				ROOT_PANEL.swapPanel(null, null);
+				ROOT_PANEL.swapPanel(currentSize, null);
 			}
 		});
         
@@ -242,7 +244,7 @@ public class TreeMap extends Display {
         			ROOT_PANEL.showInfo(ApplicationContext.getInstance().getActiveProduct().getDatabase().getProductById(peices[4]));
         			ROOT_PANEL.productSelected(new Product(peices[4], peices[3], peices[1], peices[2]));
         		} else if (e.getModifiers() == InputEvent.BUTTON3_MASK) {
-	            	ROOT_PANEL.swapPanel(null, peices[1]);
+	            	ROOT_PANEL.swapPanel(currentSize, peices[1]);
         		}
         	}
         });
