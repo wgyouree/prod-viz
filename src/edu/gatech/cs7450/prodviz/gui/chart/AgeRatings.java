@@ -23,9 +23,9 @@ public class AgeRatings {
 		JFreeChart chart = createChart(dataset);
 		
 		chartPanel = new ChartPanel(chart);
-        chartPanel.setPreferredSize(new Dimension(300, 200));
-        chartPanel.setMaximumSize(new Dimension(300, 200));
-        chartPanel.restoreAutoBounds();
+        chartPanel.setPreferredSize(new Dimension(1000, 200));
+        chartPanel.setMaximumSize(new Dimension(1000, 200));
+//        chartPanel.restoreAutoBounds();
 	}
 	
 	private XYDataset createDataset(AgeRatingPair[] reviews)

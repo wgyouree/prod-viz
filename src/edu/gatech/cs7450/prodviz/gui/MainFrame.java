@@ -113,7 +113,7 @@ public class MainFrame extends AppFrame {
 	public void setBottomPanel(AbstractBottomAppPanel panel, AbstractAppPanel controls) {
 		this.bottomPanel.removeAll();
 		this.bottomPanel.add(panel, BorderLayout.CENTER);
-		this.bottomPanel.add(controls, BorderLayout.NORTH);
+		this.add(controls, BorderLayout.NORTH);
 		this.bottomGraphPanel = panel;
 		this.validate();
 	}
