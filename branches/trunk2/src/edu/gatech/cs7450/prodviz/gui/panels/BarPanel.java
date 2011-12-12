@@ -24,10 +24,6 @@ public class BarPanel extends AbstractBottomAppPanel {
 	private JPanel leftPanel = new JPanel();
 	private JPanel rightPanel = new JPanel();
 	
-	public BarPanel() {
-		this.setBackground(Color.GREEN);
-	}
-	
 	public void initComponents() {
 		this.leftPanel.setLayout(new BorderLayout());
 		this.rightPanel.setLayout(new BorderLayout());
