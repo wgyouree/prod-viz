@@ -21,6 +21,7 @@ public class ApplicationContext {
 	private User activeUser;
 	private IRecommender activeRecommender;
 	private String activeReviewName;
+	private boolean infoPanelShowing = false;
 	
 	private static final int POSITIVE_RATING_THRESHHOLD = 5;
 	private static final int RECURSIVE_RECOMMENDER_DEPTH = 1;
@@ -97,6 +98,14 @@ public class ApplicationContext {
 	
 	public int getNumberOfRatingsCeiling() {
 		return NUMBER_OF_RATINGS_CEILING;
+	}
+	
+	public boolean isInfoPanelShowing() {
+		return infoPanelShowing;
+	}
+	
+	public void setInfoPanelShowing(boolean infoPanelShowing) {
+		this.infoPanelShowing = infoPanelShowing;
 	}
 	
 	public int getMaximumAge() {

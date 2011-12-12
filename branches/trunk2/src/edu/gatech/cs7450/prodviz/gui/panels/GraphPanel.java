@@ -24,7 +24,6 @@ public class GraphPanel extends AbstractAppPanel {
 	private static final long serialVersionUID = 1L;
 
 	private MainFrame parent;
-	private boolean infoPanelShowing = false;
 	
 	public GraphPanel(MainFrame parent) {
 		this.parent = parent;
@@ -33,10 +32,16 @@ public class GraphPanel extends AbstractAppPanel {
 	}
 	
 	public void resize(Dimension dimension) {
-		if (!this.infoPanelShowing) {
+		if (!ApplicationContext.getInstance().isInfoPanelShowing()) {
+			int height = (new Double(dimension.getHeight())).intValue() - 100;
+			if (ApplicationContext.getInstance().isInfoPanelShowing()) {
+				height = height - BottomPanel.DEFAULT_HEIGHT;
+				this.parent.setBottomPanelVisible(true);
+			} else {
+				this.parent.setBottomPanelVisible(false);
+			}
 			this.swapPanel(new Dimension(
-					(new Double(dimension.getWidth())).intValue(),
-					(new Double(dimension.getHeight())).intValue() - BottomPanel.DEFAULT_HEIGHT - 100), null);
+					(new Double(dimension.getWidth())).intValue(), height), null);
 //			System.out.println("resized to [" + dimension.getWidth() + " " + dimension.getHeight() + "]");
 		}
 	}
@@ -46,7 +51,8 @@ public class GraphPanel extends AbstractAppPanel {
 	}
 	
 	public void swapPanel(Dimension dimension, String onlyThisFirstLevelClassifier) {
-		this.infoPanelShowing = false;
+		ApplicationContext.getInstance().setInfoPanelShowing(false);
+		this.parent.setBottomPanelVisible(false);
 		this.removeAll();
 		ApplicationContext appContext = ApplicationContext.getInstance();
 		JComponent treeMap = TreeMap.renderTreeMap(
@@ -66,7 +72,8 @@ public class GraphPanel extends AbstractAppPanel {
 	}
 	
 	public void showInfo(Product product) {
-		this.infoPanelShowing = true;
+		ApplicationContext.getInstance().setInfoPanelShowing(true);
+		this.parent.setBottomPanelVisible(true);
 		this.removeAll();
 		InfoPanel panel = new InfoPanel(this, product);
 		JScrollPane scrollPane = new JScrollPane(panel,
@@ -82,11 +89,8 @@ public class GraphPanel extends AbstractAppPanel {
 	
 	public void productSelected(Product product) {
 		this.parent.updateAgePlot(product);
-
 		ApplicationContext appContext = ApplicationContext.getInstance();
-		
 		Database db = appContext.getActiveProduct().getDatabase();
-		
 		LocationRatingPair[] pair = db.getRatingsByLocationOfUser(product);
 		this.parent.updateUSMap(pair);
 
