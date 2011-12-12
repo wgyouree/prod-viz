@@ -1,10 +1,21 @@
 package edu.gatech.cs7450.prodviz.gui.viz;
 
 import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.Shape;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.geom.Point2D;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.util.HashMap;
 
 import javax.swing.BorderFactory;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+
+import edu.gatech.cs7450.prodviz.data.LocationRatingPair;
 
 import prefuse.Constants;
 import prefuse.Display;
@@ -27,11 +38,14 @@ import prefuse.data.expression.FunctionExpression;
 import prefuse.data.expression.FunctionTable;
 import prefuse.data.expression.Predicate;
 import prefuse.data.expression.parser.ExpressionParser;
+import prefuse.data.io.DataIOException;
 import prefuse.data.io.DelimitedTextTableReader;
 import prefuse.data.query.SearchQueryBinding;
 import prefuse.data.search.SearchTupleSet;
 import prefuse.data.tuple.TupleSet;
 import prefuse.render.DefaultRendererFactory;
+import prefuse.render.Renderer;
+import prefuse.render.ShapeRenderer;
 //import prefuse.render.ShapeItemRenderer;
 //import prefuse.render.TextItemRenderer;
 import prefuse.util.ColorLib;
@@ -41,18 +55,35 @@ import prefuse.util.ui.JSearchPanel;
 import prefuse.visual.VisualItem;
 import prefuse.visual.VisualTable;
 
-public class Map extends Display implements Constants {
-	
+/**
+ * Re-implementation of Ben Fry's Zipdecode. Check out the
+ * original at <a href="http://acg.media.mit.edu/people/fry/zipdecode/">
+ * http://acg.media.mit.edu/people/fry/zipdecode/</a>.
+ * 
+ * This demo showcases creating new functions in the prefuse expression
+ * language, creating derived columns, and provides an example of using
+ * a dedicated focus set of items to support more efficient data handling.
+ * 
+ * @author <a href="http://jheer.org">jeffrey heer</a>
+ */
+public class USMap extends Display implements Constants {
+
+    public static final String ZIPCODES = "data/zipcode.txt";
+    public static final String STATES = "data/state.txt";
+    
     // data groups
-    private static final String DATA = "state";
-    private static final String LABELS = "rating";
+    private static final String DATA = "data";
+    private static final String LABELS = "labels";
     private static final String FOCUS = Visualization.FOCUS_ITEMS;
+    
+    private static LocationRatingPair[] PAIRS;
+    private static java.util.Map<String, String> STATE_MAPPING;
     
     public static class StateLookupFunction extends FunctionExpression {
         private static Table s_states;
         static {
             try {
-                s_states = new DelimitedTextTableReader().readTable(MapGenerator.STATES);
+                s_states = new DelimitedTextTableReader().readTable(STATES);
             } catch ( Exception e ) { e.printStackTrace(); }
         }
         
@@ -67,17 +98,27 @@ public class Map extends Display implements Constants {
     // add state function to the FunctionTable
     static { FunctionTable.addFunction("STATE", StateLookupFunction.class); }
     
+    private java.util.Map<String, String> stateMapping;
     
-    public Map(final Table t) {
+    public USMap(final Table t, final LocationRatingPair[] pairs) {
         super(new Visualization());
         
-        // this predicate makes sure only the continental states are included
-//        Predicate filter = (Predicate)ExpressionParser.parse(
-//                "state >= 1 && state <= 56 && state != 2 && state != 15");
-        VisualTable vt = m_vis.addTable(DATA, t, null, getDataSchema());
+        if (stateMapping == null) {
+        	populateStateMapping();
+        }
         
-        vt.addColumn("state", String.class);
-        vt.addColumn("rating", Double.class);
+        STATE_MAPPING = stateMapping;
+        PAIRS = pairs;
+        
+        // this predicate makes sure only the continental states are included
+        Predicate filter = (Predicate)ExpressionParser.parse(
+                "state >= 1 && state <= 56 && state != 2 && state != 15");
+        VisualTable vt = m_vis.addTable(DATA, t, filter, getDataSchema());
+        // zip codes are loaded in as integers, so lets create a derived
+        // column that has correctly-formatted 5 digit strings
+        vt.addColumn("zipstr", "LPAD(zip,5,'0')");
+        // now add a formatted label to show within the visualization
+        vt.addColumn("label", "CONCAT(CAP(city),', ',STATE(state),' ',zipstr)");
         
         // create a filter controlling label appearance
         Predicate loneResult = (Predicate)ExpressionParser.parse(
@@ -93,29 +134,22 @@ public class Map extends Display implements Constants {
         // -- renderers -------------------------------------------------------
         
         DefaultRendererFactory rf = new DefaultRendererFactory();
-//        rf.setDefaultRenderer(new ShapeItemRenderer(1)); // 1 pixel rectangles
-//        rf.add("INGROUP('labels')", new TextItemRenderer("label") {
-//            public Shape getShape(VisualItem item) {
-//                // set horizontal alignment based on x-coordinate position
-//                setHorizontalAlignment(item.getX()>getWidth()/2 ? RIGHT:LEFT);
-//                // now return shape as usual
-//                return super.getShape(item);
-//            }
-//        });
+        rf.setDefaultRenderer(new ShapeRenderer(1)); // 1 pixel rectangles
         m_vis.setRendererFactory(rf);
         
         // -- actions ---------------------------------------------------------
         
         ActionList layout = new ActionList();
-        layout.add(new AxisLayout(DATA, "latitude", Y_AXIS));
-        layout.add(new AxisLayout(DATA, "longitude", X_AXIS));
+        layout.add(new AxisLayout(DATA, "lat", Y_AXIS));
+        layout.add(new AxisLayout(DATA, "lon", X_AXIS));
         m_vis.putAction("layout", layout);
         
         // the update list updates the colors of data points and sets the visual
         // properties for any labels. Color updating is limited only to the
         // current focus items, ensuring faster performance.
-        final Action update = new ZipColorAction(FOCUS);
-        m_vis.putAction("update", update);
+        ActionList colors = new ActionList();
+        colors.add(new ZipColorAction(DATA));
+        m_vis.putAction("colors", colors);
         
         // animate a change in color in the interface. this animation is quite
         // short, only 200ms, so that it does not impede with interaction.
@@ -125,12 +159,12 @@ public class Map extends Display implements Constants {
         animate.add(new ColorAnimator(FOCUS, VisualItem.FILLCOLOR));
         animate.add(new ColorAnimator(LABELS, VisualItem.TEXTCOLOR));
         animate.add(new RepaintAction());
-        animate.addActivityListener(new ActivityAdapter() {
-            public void activityCancelled(Activity a) {
-                // if animation is canceled, set colors to final state
-                update.run(1.0);
-            }
-        });
+//        animate.addActivityListener(new ActivityAdapter() {
+//            public void activityCancelled(Activity a) {
+//                // if animation is canceled, set colors to final state
+//                update.run(1.0);
+//            }
+//        });
         m_vis.putAction("animate", animate);
         
         // update items after a resize of the display, animating them to their
@@ -149,62 +183,12 @@ public class Map extends Display implements Constants {
         setBackground(ColorLib.getGrayscale(50));
         setFocusable(false);
         
-        // -- search ----------------------------------------------------------
-        
-        // zipcode text search is performed using a prefix based search,
-        // provided by a search dynamic query. to make this application run
-        // more efficiently, we optimize data handling by taking all search
-        // results (both added and removed) and shuttling them into a
-        // focus set. we work with this reduced set for updating and
-        // animating color changes in the action definitions above.
-        
-        // create a final reference to the focus set, so that the following
-        // search listener can access it.
-        final TupleSet focus = m_vis.getFocusGroup(FOCUS);
-        
-        // create the search query binding
-        SearchQueryBinding searchQ = new SearchQueryBinding(vt, "state");
-        final SearchTupleSet search = searchQ.getSearchSet(); 
-        
-        // create the listener that collects search results into a focus set
-        search.addTupleSetListener(new TupleSetListener() {
-            public void tupleSetChanged(TupleSet t, Tuple[] add, Tuple[] rem) {
-                m_vis.cancel("animate");
-                
-                // invalidate changed tuples, add them all to the focus set
-                focus.clear();
-                for ( int i=0; i<add.length; ++i ) {
-                    ((VisualItem)add[i]).setValidated(false);
-                    focus.addTuple(add[i]);
-                }
-                for ( int i=0; i<rem.length; ++i ) {
-                    ((VisualItem)rem[i]).setValidated(false);
-                    focus.addTuple(rem[i]);
-                }
-                
-                m_vis.run("update");
-                m_vis.run("animate");
-            }
-        });
-        m_vis.addFocusGroup(Visualization.SEARCH_ITEMS, search);
-        
-        // create and parameterize a search panel for searching on state
-        final JSearchPanel searcher = searchQ.createSearchPanel();
-        searcher.setLabelText("state>"); // the search box label
-        searcher.setShowCancel(false); // don't show the cancel query button
-        searcher.setShowBorder(false); // don't show the search box border
-        searcher.setFont(FontLib.getFont("Georgia", Font.PLAIN, 22));
-        searcher.setBackground(ColorLib.getGrayscale(50));
-        searcher.setForeground(ColorLib.getColor(100,100,75));
-        add(searcher); // add the search box as a sub-component of the display
-        searcher.setBounds(10, getHeight()-40, 120, 30);
-        
         addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent e) {
                 m_vis.run("layout");
                 m_vis.run("update");
                 m_vis.run("resize");
-                searcher.setBounds(10, getHeight()-40, 120, 30);
+                m_vis.run("colors");
                 invalidate();
             }
         });
@@ -212,13 +196,14 @@ public class Map extends Display implements Constants {
         // -- launch ----------------------------------------------------------
         
         m_vis.run("layout");
+        m_vis.run("colors");
         m_vis.run("animate");
     }
     
     private static Schema getDataSchema() {
         Schema s = PrefuseLib.getVisualItemSchema();
         s.setDefault(VisualItem.INTERACTIVE, false);
-        s.setDefault(VisualItem.FILLCOLOR, ColorLib.rgb(100,100,75));
+        s.setDefault(VisualItem.FILLCOLOR, ColorLib.gray(50));
         return s;
     }
     
@@ -232,7 +217,7 @@ public class Map extends Display implements Constants {
         
         // default fill color should be invisible
         s.addInterpolatedColumn(VisualItem.FILLCOLOR, int.class);
-        s.setInterpolatedDefault(VisualItem.FILLCOLOR, 0);
+        s.setInterpolatedDefault(VisualItem.FILLCOLOR, ColorLib.gray(50));
         
         s.addInterpolatedColumn(VisualItem.TEXTCOLOR, int.class);
         // default text color is white
@@ -242,7 +227,49 @@ public class Map extends Display implements Constants {
         return s;
     }
     
+    private void populateStateMapping() {
+    	try {
+    		File stateDataFile = new File("data/stateData.txt");
+    		BufferedReader stateDataReader = new BufferedReader(new FileReader(stateDataFile));
+    		
+    		File stateFile = new File("data/state.txt");
+    		BufferedReader stateReader = new BufferedReader(new FileReader(stateFile));
+    		
+    		stateMapping = new HashMap<String, String>();
+    		
+    		java.util.Map<String, String> stateToCode = new HashMap<String, String>();
+    		
+    		String line = stateReader.readLine();
+    		while (line != null) {
+    			String[] parts = line.split("[\\t]");
+    			stateToCode.put(parts[1].toLowerCase(), parts[0]);
+    			line = stateReader.readLine();
+    		}
+    		
+    		line = stateDataReader.readLine();
+    		while (line != null) {
+    			String[] parts = line.split("[,]");
+    			stateMapping.put(parts[0].toLowerCase(), stateToCode.get(parts[0]));
+    			line = stateDataReader.readLine();
+    		}
+    		
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    	}
+    }
+    
     // ------------------------------------------------------------------------
+    
+    public static JComponent createMap(LocationRatingPair[] pairs) {
+    	try {
+	    	DelimitedTextTableReader tr = new DelimitedTextTableReader();
+	        Table t = tr.readTable(ZIPCODES);
+	        USMap zd = new USMap(t, pairs);
+	        return zd;
+    	} catch (Exception e) {
+    		return null;
+    	}
+    }
     
     public static class ZipColorAction extends ColorAction {
         public ZipColorAction(String group) {
@@ -250,11 +277,21 @@ public class Map extends Display implements Constants {
         }
         
         public int getColor(VisualItem item) {
-            if ( item.isInGroup(Visualization.SEARCH_ITEMS) ) {
-                return ColorLib.gray(255);
-            } else {
-                return ColorLib.rgb(100,100,75);
-            }
+
+			String stateCode = item.getString("state");
+			for (int i = 0; i < PAIRS.length; i++) {
+				String locationStateCode = STATE_MAPPING.get(PAIRS[i].getLocation().toLowerCase());
+				if (locationStateCode == null) {
+					System.out.println(PAIRS[i].getLocation());
+				} else if (locationStateCode.equalsIgnoreCase(stateCode)) {
+					double rating = PAIRS[i].getRating();
+					int minimum = 40;
+					int diff = 255 - minimum;
+	                return ColorLib.rgb(0,(new Double((rating / 10) * diff + minimum).intValue()),0);
+				}
+			}
+            return ColorLib.gray(50);
         }
     }
-}
+    
+} // end of class ZipDecode
