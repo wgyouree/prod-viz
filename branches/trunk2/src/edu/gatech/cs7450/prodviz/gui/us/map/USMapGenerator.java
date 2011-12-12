@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-import org.jdesktop.swingx.JXMapKit;
+
 import org.jdesktop.swingx.JXMapViewer;
 import org.jdesktop.swingx.mapviewer.GeoPosition;
 import org.jdesktop.swingx.painter.Painter;
@@ -32,7 +32,7 @@ public class USMapGenerator {
 	public static JComponent createMap(final LocationRatingPair[] ratings) {
 		USMapGenerator.createStates();
 		
-		Painter<JXMapViewer> polygonOverlay = new Painter<JXMapViewer>(){
+		/*Painter<JXMapViewer> polygonOverlay = new Painter<JXMapViewer>(){
 			public void paint (Graphics2D g, JXMapViewer map, int w, int h)
 			{
 				g = (Graphics2D) g.create();
@@ -62,14 +62,14 @@ public class USMapGenerator {
 				
 				g.dispose();
 			}
-		};
+		};*/
 		
-		JXMapKit usMap = new JXMapKit();
+		JXMapViewer usMap = new JXMapViewer();
 		
-		usMap.getMiniMap().setOverlayPainter(polygonOverlay);
-		
+		//usMap.getMainMap().setOverlayPainter(polygonOverlay);
+		return usMap;
 		// TODO: populate panel with map
-		return new JPanel();
+		//return new JPanel();
 	}
 	
 	private static ArrayList<USState> createStates()

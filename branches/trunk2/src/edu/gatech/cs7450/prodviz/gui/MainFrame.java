@@ -8,6 +8,7 @@ import java.awt.event.ComponentListener;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import edu.gatech.cs7450.prodviz.data.LocationRatingPair;
 import edu.gatech.cs7450.prodviz.data.Product;
 import edu.gatech.cs7450.prodviz.gui.panels.BarPanel;
 import edu.gatech.cs7450.prodviz.gui.panels.ControlsPanel;
@@ -24,6 +25,7 @@ public class MainFrame extends AppFrame {
 	private AbstractAppPanel DEFAULT_RIGHT_PANEL = new ControlsPanel();
 	
 	private AbstractBottomAppPanel bottomGraphPanel;
+	private AbstractBottomAppPanel bottomMapPanel;
 	
 	private static int DEFAULT_WIDTH = 800;
 	private static int DEFAULT_HEIGHT = 600;
@@ -114,6 +116,7 @@ public class MainFrame extends AppFrame {
 		this.bottomPanel.removeAll();
 		this.bottomPanel.add(panel, BorderLayout.CENTER);
 		this.bottomGraphPanel = panel;
+		this.bottomMapPanel = panel;
 		this.invalidate();
 	}
 	
@@ -126,8 +129,10 @@ public class MainFrame extends AppFrame {
 	public void updateAgePlot(Product product) {
 		this.bottomGraphPanel.updateAgePlot(product);
 	}
+
 	
-	public void updateMap(Product product) {
-		this.bottomGraphPanel.updateMap(product);
+	public void updateUSMap(LocationRatingPair[] pair){
+		this.bottomMapPanel.updateMap(pair);
 	}
+
 }
