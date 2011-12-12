@@ -7,8 +7,6 @@ import java.util.Enumeration;
 import java.util.List;
 
 import edu.gatech.cs7450.prodviz.data.AbstractProduct;
-import edu.gatech.cs7450.prodviz.data.DatabaseConfig;
-import edu.gatech.cs7450.prodviz.data.IDatabaseConfig;
 import edu.gatech.cs7450.prodviz.gui.MainFrame;
 
 public class ProdViz {
@@ -25,14 +23,6 @@ public class ProdViz {
 		// Create GUI
 		MainFrame mainFrame = new MainFrame(APP_NAME);
 		
-		// Create database interface
-		IDatabaseConfig config = new DatabaseConfig(
-				"com.mysql.jdbc.Driver",
-				"jdbc:mysql://localhost/",
-				"user",
-				"admin",
-				"admin");
-		
 		// Create application context
 		ApplicationContext.initialize(initializeProductImps(), mainFrame);
 		
@@ -42,7 +32,6 @@ public class ProdViz {
 	
 	public static AbstractProduct[] initializeProductImps() {
 		try {
-			String className = ProdViz.class.getName();
 			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 			String path = impPackageName.replace('.', '/');
 			Enumeration<URL> resources = classLoader.getResources(path);

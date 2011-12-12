@@ -71,9 +71,18 @@ public class GraphPanel extends AbstractAppPanel {
 		this.validate();
 	}
 	
-	public void showInfo(Product product) {
+	public void showProgressIndicator() {
 		ApplicationContext.getInstance().setInfoPanelShowing(true);
 		this.parent.setBottomPanelVisible(true);
+		this.parent.showProgressScreen();
+		this.validate();
+	}
+	
+	public void hideProgressIndicator() {
+		this.parent.hideProgressScreen();
+	}
+	
+	public void showInfo(Product product) {
 		this.removeAll();
 		InfoPanel panel = new InfoPanel(this, product);
 		JScrollPane scrollPane = new JScrollPane(panel,

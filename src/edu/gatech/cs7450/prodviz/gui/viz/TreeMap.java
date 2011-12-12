@@ -22,6 +22,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingWorker;
 
 import edu.gatech.cs7450.prodviz.ApplicationContext;
 import edu.gatech.cs7450.prodviz.data.Product;
@@ -238,11 +239,21 @@ public class TreeMap extends Display {
         	public void itemClicked(VisualItem item, MouseEvent e) {
 
             	String name = item.getString("name");
-            	String[] peices = name.split(TreeMapGenerator.DELIMETER_REGEXP);
+            	final String[] peices = name.split(TreeMapGenerator.DELIMETER_REGEXP);
             	
         		if (e.getModifiers() == InputEvent.BUTTON1_MASK) {
-        			ROOT_PANEL.showInfo(ApplicationContext.getInstance().getActiveProduct().getDatabase().getProductById(peices[4]));
-        			ROOT_PANEL.productSelected(new Product(peices[4], peices[3], peices[1], peices[2]));
+        			ROOT_PANEL.showProgressIndicator();
+        			SwingWorker<String, Integer> task = new SwingWorker<String, Integer>() {
+        				@Override
+        				protected String doInBackground() throws Exception {
+        					ROOT_PANEL.productSelected(new Product(peices[4], peices[3], peices[1], peices[2]));
+        					Product product = ApplicationContext.getInstance().getActiveProduct().getDatabase().getProductById(peices[4]);
+                			ROOT_PANEL.hideProgressIndicator();
+        					ROOT_PANEL.showInfo(product);
+                			return null;
+        				}
+        			};
+        			task.execute();
         		} else if (e.getModifiers() == InputEvent.BUTTON3_MASK) {
 	            	ROOT_PANEL.swapPanel(currentSize, peices[1]);
         		}
