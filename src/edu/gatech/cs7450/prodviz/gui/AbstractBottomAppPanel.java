@@ -7,5 +7,5 @@ public abstract class AbstractBottomAppPanel extends AbstractAppPanel {
 
 	public abstract void updateAgePlot(Product product);
 	
-	public abstract void updateMap(Product product);
+	public abstract void updateMap(LocationRatingPair[] pair);
 }

@@ -25,10 +25,10 @@ public class MainFrame extends AppFrame {
 	private AbstractAppPanel DEFAULT_RIGHT_PANEL = new ControlsPanel();
 	
 	private AbstractBottomAppPanel bottomGraphPanel;
-	private AbstractBottomAppPanel bottomMapPanel;
+//	private AbstractBottomAppPanel bottomMapPanel;
 	
-	private static int DEFAULT_WIDTH = 800;
-	private static int DEFAULT_HEIGHT = 600;
+	private static int DEFAULT_WIDTH = 1000;
+	private static int DEFAULT_HEIGHT = 800;
 	
 	private MainPanel mainPanel;
 	private BottomPanel bottomPanel;
@@ -70,7 +70,7 @@ public class MainFrame extends AppFrame {
 		});
 	}
 	
-	private void resizeAll() {
+	public void resizeAll() {
 		this.mainPanel.resize(new Dimension(this.getWidth(), this.getHeight()));
 	}
 	
@@ -109,21 +109,20 @@ public class MainFrame extends AppFrame {
 	public void setMainPanel(AbstractAppPanel panel) {
 		this.mainPanel.removeAll();
 		this.mainPanel.addAppPanel(panel);
-		this.invalidate();
+		this.validate();
 	}
 	
 	public void setBottomPanel(AbstractBottomAppPanel panel) {
 		this.bottomPanel.removeAll();
 		this.bottomPanel.add(panel, BorderLayout.CENTER);
 		this.bottomGraphPanel = panel;
-		this.bottomMapPanel = panel;
-		this.invalidate();
+		this.validate();
 	}
 	
 	public void setRightPanel(AbstractAppPanel panel) {
 		this.rightPanel.removeAll();
 		this.rightPanel.add(panel);
-		this.invalidate();
+		this.validate();
 	}
 	
 	public void updateAgePlot(Product product) {
@@ -132,7 +131,7 @@ public class MainFrame extends AppFrame {
 
 	
 	public void updateUSMap(LocationRatingPair[] pair){
-		this.bottomMapPanel.updateMap(pair);
+		this.bottomGraphPanel.updateMap(pair);
 	}
 
 }
