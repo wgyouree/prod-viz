@@ -234,8 +234,6 @@ public class TreeMapGenerator {
             trans.transform(source, result);
             String xmlString = sw.toString();
             
-            System.out.println(xmlString);
-            
 			return new ByteArrayInputStream(xmlString.getBytes("UTF-8"));
 			
 		} catch (Exception e) {
