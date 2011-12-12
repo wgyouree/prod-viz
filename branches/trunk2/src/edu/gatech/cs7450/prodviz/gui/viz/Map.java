@@ -1,13 +1,10 @@
 package edu.gatech.cs7450.prodviz.gui.viz;
 
 import java.awt.Font;
-import java.awt.Shape;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
 import javax.swing.BorderFactory;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
 
 import prefuse.Constants;
 import prefuse.Display;
@@ -46,19 +43,16 @@ import prefuse.visual.VisualTable;
 
 public class Map extends Display implements Constants {
 	
-	public static final String ZIPCODES = "data/stateData.txt";
-    public static final String STATES = "/state.txt";
-    
     // data groups
-    private static final String DATA = "data";
-    private static final String LABELS = "labels";
+    private static final String DATA = "state";
+    private static final String LABELS = "rating";
     private static final String FOCUS = Visualization.FOCUS_ITEMS;
     
     public static class StateLookupFunction extends FunctionExpression {
         private static Table s_states;
         static {
             try {
-                s_states = new DelimitedTextTableReader().readTable(STATES);
+                s_states = new DelimitedTextTableReader().readTable(MapGenerator.STATES);
             } catch ( Exception e ) { e.printStackTrace(); }
         }
         
@@ -78,14 +72,12 @@ public class Map extends Display implements Constants {
         super(new Visualization());
         
         // this predicate makes sure only the continental states are included
-        Predicate filter = (Predicate)ExpressionParser.parse(
-                "state >= 1 && state <= 56 && state != 2 && state != 15");
-        VisualTable vt = m_vis.addTable(DATA, t, filter, getDataSchema());
-        // zip codes are loaded in as integers, so lets create a derived
-        // column that has correctly-formatted 5 digit strings
-        vt.addColumn("zipstr", "LPAD(zip,5,'0')");
-        // now add a formatted label to show within the visualization
-        vt.addColumn("label", "CONCAT(CAP(city),', ',STATE(state),' ',zipstr)");
+//        Predicate filter = (Predicate)ExpressionParser.parse(
+//                "state >= 1 && state <= 56 && state != 2 && state != 15");
+        VisualTable vt = m_vis.addTable(DATA, t, null, getDataSchema());
+        
+        vt.addColumn("state", String.class);
+        vt.addColumn("rating", Double.class);
         
         // create a filter controlling label appearance
         Predicate loneResult = (Predicate)ExpressionParser.parse(
@@ -115,8 +107,8 @@ public class Map extends Display implements Constants {
         // -- actions ---------------------------------------------------------
         
         ActionList layout = new ActionList();
-        layout.add(new AxisLayout(DATA, "lat", Y_AXIS));
-        layout.add(new AxisLayout(DATA, "lon", X_AXIS));
+        layout.add(new AxisLayout(DATA, "latitude", Y_AXIS));
+        layout.add(new AxisLayout(DATA, "longitude", X_AXIS));
         m_vis.putAction("layout", layout);
         
         // the update list updates the colors of data points and sets the visual
@@ -152,7 +144,7 @@ public class Map extends Display implements Constants {
         
         // -- display ---------------------------------------------------------
         
-        setSize(720, 360);
+        setSize(300, 200);
         setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
         setBackground(ColorLib.getGrayscale(50));
         setFocusable(false);
@@ -171,7 +163,7 @@ public class Map extends Display implements Constants {
         final TupleSet focus = m_vis.getFocusGroup(FOCUS);
         
         // create the search query binding
-        SearchQueryBinding searchQ = new SearchQueryBinding(vt, "zipstr");
+        SearchQueryBinding searchQ = new SearchQueryBinding(vt, "state");
         final SearchTupleSet search = searchQ.getSearchSet(); 
         
         // create the listener that collects search results into a focus set
@@ -196,9 +188,9 @@ public class Map extends Display implements Constants {
         });
         m_vis.addFocusGroup(Visualization.SEARCH_ITEMS, search);
         
-        // create and parameterize a search panel for searching on zip code
+        // create and parameterize a search panel for searching on state
         final JSearchPanel searcher = searchQ.createSearchPanel();
-        searcher.setLabelText("zip>"); // the search box label
+        searcher.setLabelText("state>"); // the search box label
         searcher.setShowCancel(false); // don't show the cancel query button
         searcher.setShowBorder(false); // don't show the search box border
         searcher.setFont(FontLib.getFont("Georgia", Font.PLAIN, 22));

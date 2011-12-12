@@ -23,8 +23,8 @@ public class AgeRatings {
 		JFreeChart chart = createChart(dataset);
 		
 		chartPanel = new ChartPanel(chart);
-        chartPanel.setPreferredSize(new Dimension(1000, 200));
-        chartPanel.setMaximumSize(new Dimension(1000, 200));
+        chartPanel.setPreferredSize(new Dimension(500, 200));
+        chartPanel.setMaximumSize(new Dimension(500, 200));
 //        chartPanel.restoreAutoBounds();
 	}
 	
