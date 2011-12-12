@@ -1,14 +1,7 @@
 package edu.gatech.cs7450.prodviz.gui.viz;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringBufferInputStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,10 +21,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import prefuse.data.Graph;
 import prefuse.data.Tree;
-import prefuse.data.io.DataIOException;
-import prefuse.data.io.GraphMLReader;
 import prefuse.data.io.TreeMLReader;
 
 import edu.gatech.cs7450.prodviz.ApplicationContext;

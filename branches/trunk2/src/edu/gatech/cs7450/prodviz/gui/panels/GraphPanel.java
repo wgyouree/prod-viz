@@ -3,19 +3,11 @@ package edu.gatech.cs7450.prodviz.gui.panels;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-
-import prefuse.data.Graph;
-import prefuse.data.io.DataIOException;
 
 import edu.gatech.cs7450.prodviz.ApplicationContext;
 import edu.gatech.cs7450.prodviz.data.Database;
@@ -24,8 +16,6 @@ import edu.gatech.cs7450.prodviz.data.Product;
 import edu.gatech.cs7450.prodviz.gui.AbstractAppPanel;
 import edu.gatech.cs7450.prodviz.gui.BottomPanel;
 import edu.gatech.cs7450.prodviz.gui.MainFrame;
-import edu.gatech.cs7450.prodviz.gui.ResizeablePanel;
-import edu.gatech.cs7450.prodviz.gui.RightPanel;
 import edu.gatech.cs7450.prodviz.gui.viz.TreeMap;
 import edu.gatech.cs7450.prodviz.gui.viz.TreeMapGenerator;
 
@@ -45,9 +35,9 @@ public class GraphPanel extends AbstractAppPanel {
 	public void resize(Dimension dimension) {
 		if (!this.infoPanelShowing) {
 			this.swapPanel(new Dimension(
-					(new Double(dimension.getWidth())).intValue() - RightPanel.DEFAULT_WIDTH,
+					(new Double(dimension.getWidth())).intValue(),
 					(new Double(dimension.getHeight())).intValue() - BottomPanel.DEFAULT_HEIGHT - 70), null);
-			System.out.println("resized to [" + dimension.getWidth() + " " + dimension.getHeight() + "]");
+//			System.out.println("resized to [" + dimension.getWidth() + " " + dimension.getHeight() + "]");
 		}
 	}
 	
