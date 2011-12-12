@@ -9,7 +9,7 @@ public class BottomPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
-	public static int DEFAULT_WIDTH = 800;
+	public static int DEFAULT_WIDTH = 1000;
 	public static int DEFAULT_HEIGHT = 200;
 	
 	public BottomPanel() {
