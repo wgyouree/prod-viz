@@ -36,7 +36,7 @@ public class GraphPanel extends AbstractAppPanel {
 		if (!this.infoPanelShowing) {
 			this.swapPanel(new Dimension(
 					(new Double(dimension.getWidth())).intValue(),
-					(new Double(dimension.getHeight())).intValue() - BottomPanel.DEFAULT_HEIGHT - 70), null);
+					(new Double(dimension.getHeight())).intValue() - BottomPanel.DEFAULT_HEIGHT - 100), null);
 //			System.out.println("resized to [" + dimension.getWidth() + " " + dimension.getHeight() + "]");
 		}
 	}
