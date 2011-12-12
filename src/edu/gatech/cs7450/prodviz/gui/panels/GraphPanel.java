@@ -131,5 +131,6 @@ public class GraphPanel extends AbstractAppPanel {
 	
 	public void productSelected(Product product) {
 		this.parent.updateAgePlot(product);
+		this.parent.updateMap(product);
 	}
 }

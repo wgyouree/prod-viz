@@ -126,4 +126,8 @@ public class MainFrame extends AppFrame {
 	public void updateAgePlot(Product product) {
 		this.bottomGraphPanel.updateAgePlot(product);
 	}
+	
+	public void updateMap(Product product) {
+		this.bottomGraphPanel.updateMap(product);
+	}
 }
