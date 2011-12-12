@@ -17,6 +17,8 @@ import prefuse.data.Graph;
 import prefuse.data.io.DataIOException;
 
 import edu.gatech.cs7450.prodviz.ApplicationContext;
+import edu.gatech.cs7450.prodviz.data.Database;
+import edu.gatech.cs7450.prodviz.data.LocationRatingPair;
 import edu.gatech.cs7450.prodviz.data.Product;
 import edu.gatech.cs7450.prodviz.gui.AbstractAppPanel;
 import edu.gatech.cs7450.prodviz.gui.BottomPanel;
@@ -131,6 +133,13 @@ public class GraphPanel extends AbstractAppPanel {
 	
 	public void productSelected(Product product) {
 		this.parent.updateAgePlot(product);
-		this.parent.updateMap(product);
+
+		ApplicationContext appContext = ApplicationContext.getInstance();
+		
+		Database db = appContext.getActiveProduct().getDatabase();
+		
+		LocationRatingPair[] pair = db.getRatingsByLocationOfUser(product);
+		this.parent.updateUSMap(pair);
+
 	}
 }
