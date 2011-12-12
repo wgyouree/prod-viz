@@ -6,6 +6,7 @@ import java.awt.Dimension;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 
 import org.jdesktop.swingx.JXMapKit;
 
@@ -28,6 +29,10 @@ public class BarPanel extends AbstractBottomAppPanel {
 		this.leftPanel.setLayout(new BorderLayout());
 		this.rightPanel.setLayout(new BorderLayout());
 		
+		this.setupBarPanel();
+	}
+	
+	private void setupBarPanel() {
 		this.add(leftPanel);
 		this.add(rightPanel);
 	}
@@ -46,13 +51,25 @@ public class BarPanel extends AbstractBottomAppPanel {
 	public void updateMap(LocationRatingPair[] pair) {
 		this.rightPanel.removeAll();
 		
-		//ApplicationContext appContext = ApplicationContext.getInstance();
-//		LocationRatingPair[] ratings = appContext.getActiveProduct().getDatabase().getRatingsByLocationOfUser(product);
-//		JComponent comp = USMapGenerator.createMap(pair);
-//		JComponent comp = MapGenerator.generateMap(pair);
 		JComponent comp = USMap.createMap(pair);
 		this.rightPanel.add(comp,BorderLayout.CENTER);
 		this.validate();
+	}
+	
+	@Override
+	public void hideProgressIndicator() {
+		this.removeAll();
+		this.setupBarPanel();
+		this.validate();
+	}
+	
+	@Override
+	public void showProgressIndicator() {
+		this.removeAll();
+		JProgressBar progressBar = new JProgressBar();
+		progressBar.setIndeterminate(true);
+		progressBar.setPreferredSize(new Dimension(300, 50));
+		this.add(progressBar);
 	}
 	
 	@Override

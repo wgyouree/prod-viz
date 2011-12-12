@@ -5,7 +5,6 @@ import edu.gatech.cs7450.prodviz.data.Classifier;
 import edu.gatech.cs7450.prodviz.data.DatabaseConfig;
 import edu.gatech.cs7450.prodviz.data.IProductTableSchema;
 import edu.gatech.cs7450.prodviz.data.IReviewTableSchema;
-import edu.gatech.cs7450.prodviz.data.ITableSchema;
 import edu.gatech.cs7450.prodviz.data.IUserTableSchema;
 import edu.gatech.cs7450.prodviz.data.SQLDatabase;
 

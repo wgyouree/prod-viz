@@ -8,6 +8,7 @@ import java.awt.event.ComponentListener;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import edu.gatech.cs7450.prodviz.ApplicationContext;
 import edu.gatech.cs7450.prodviz.data.LocationRatingPair;
 import edu.gatech.cs7450.prodviz.data.Product;
 import edu.gatech.cs7450.prodviz.gui.panels.BarPanel;
@@ -67,6 +68,14 @@ public class MainFrame extends AppFrame {
 		});
 	}
 	
+	public void showProgressScreen() {
+		this.bottomGraphPanel.showProgressIndicator();
+	}
+	
+	public void hideProgressScreen() {
+		this.bottomGraphPanel.hideProgressIndicator();
+	}
+	
 	public void resizeAll() {
 		this.mainPanel.resize(new Dimension(this.getWidth(), this.getHeight()));
 	}
@@ -119,7 +128,7 @@ public class MainFrame extends AppFrame {
 	}
 
 	
-	public void updateUSMap(LocationRatingPair[] pair){
+	public void updateUSMap(LocationRatingPair[] pair) {
 		this.bottomGraphPanel.updateMap(pair);
 	}
 	
