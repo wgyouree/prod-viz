@@ -1,0 +1,1 @@
+A visual product recommendation application. It allows users to view large numbers (100s to 1000s) of recommended products and browse quickly using technologies from the information visualization field. Current implementation is restricted to books, and allows purchase of books through the publicly available Amazon API.
